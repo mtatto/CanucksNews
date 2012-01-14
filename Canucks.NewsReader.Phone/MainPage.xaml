@@ -1,0 +1,184 @@
+﻿<phone:PhoneApplicationPage x:Class="Canucks.NewsReader.Phone.MainPage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone" xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls" xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit" xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" xmlns:ib="clr-namespace:Canucks.NewsReader.Phone.Helpers" xmlns:Converters="clr-namespace:Canucks.NewsReader.Phone.Converters" xmlns:my="clr-namespace:Microsoft.Advertising.Mobile.UI;assembly=Microsoft.Advertising.Mobile.UI" mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="696" FontFamily="{StaticResource PhoneFontFamilyNormal}" FontSize="{StaticResource PhoneFontSizeNormal}" Foreground="{StaticResource PhoneForegroundBrush}" SupportedOrientations="Portrait" Orientation="Portrait" shell:SystemTray.IsVisible="True">
+	<!--LayoutRoot is the root grid where all page content is placed-->
+	<Grid x:Name="LayoutRoot" Background="Transparent">
+		<controls:Panorama Name="MainPano" Title="{Binding ApplicationName}">
+			<!--<controls:Panorama.Background>
+                <ImageBrush ImageSource="images/Canucks.jpg"></ImageBrush>
+            </controls:Panorama.Background>-->
+            
+			<controls:PanoramaItem Header="schedule">
+				<Grid>
+					<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">
+
+						<StackPanel Margin="0,0,-12,0">
+
+							<HyperlinkButton x:Name="lnkbtupcoming" Margin="0,0,-12,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" 
+                                             toolkit:TiltEffect.IsTiltEnabled="True" Style="{StaticResource EmptyButtonStyle}" Background="#06843D" Click="lnkbtupcoming_Click">
+								<StackPanel>
+									<TextBlock Style="{StaticResource PhoneTextNormalStyle}" Text="Upcoming" Margin="12" Foreground="White" />
+								</StackPanel>
+							</HyperlinkButton>
+
+							<ListBox Margin="0,0,-12,0" x:Name="UpComin" ItemsSource="{Binding UpComingSchedule}" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+								<ListBox.ItemTemplate>
+									<DataTemplate>
+										<Grid>
+											<StackPanel Margin="0,0,0,10">
+												<StackPanel>
+													<TextBlock Style="{StaticResource PhoneTextTitle2Style}" Text="{Binding Teams}" TextWrapping="Wrap" />
+													<TextBlock Style="{StaticResource PhoneTextNormalStyle}" Text="{Binding GameDateTime}" />
+													<TextBlock Style="{StaticResource PhoneTextNormalStyle}" Foreground="{StaticResource PhoneSubtleBrush}" Text="{Binding TvInfo}" />
+												</StackPanel>
+											</StackPanel>
+										</Grid>
+									</DataTemplate>
+								</ListBox.ItemTemplate>
+							</ListBox>
+							<HyperlinkButton x:Name="lnkbtFinalScores" Margin="0,12,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" 
+                                             toolkit:TiltEffect.IsTiltEnabled="True" Style="{StaticResource EmptyButtonStyle}" Background="#06843D" Click="lnkbtFinalScores_Click">
+								<StackPanel>
+									<TextBlock Style="{StaticResource PhoneTextNormalStyle}" Text="Final Scores" Margin="12" Foreground="White" />
+								</StackPanel>
+							</HyperlinkButton>
+
+							<ListBox Margin="0,0,-12,0" x:Name="Final" ItemsSource="{Binding CompletedSchedule}" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+								<ListBox.ItemTemplate>
+									<DataTemplate>
+										<Grid>
+											<StackPanel Margin="0,0,0,10">
+												<StackPanel>
+													<TextBlock Style="{StaticResource PhoneTextTitle2Style}" Text="{Binding Teams}" TextWrapping="Wrap" />
+													<TextBlock Style="{StaticResource PhoneTextNormalStyle}" Text="{Binding GameDateTime}" />
+													<TextBlock Style="{StaticResource PhoneTextNormalStyle}" Foreground="{StaticResource PhoneSubtleBrush}" Text="{Binding FinalScores}" />
+												</StackPanel>
+											</StackPanel>
+										</Grid>
+									</DataTemplate>
+								</ListBox.ItemTemplate>
+							</ListBox>
+						</StackPanel>
+					</ScrollViewer>
+				</Grid>
+			</controls:PanoramaItem>
+
+			<controls:PanoramaItem Header="recent news">
+				<Grid>
+					<ListBox Margin="0,0,-12,0" x:Name="recentItems" ItemsSource="{Binding StreamItems}">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<Grid>
+									<StackPanel Margin="0,0,0,0" toolkit:TiltEffect.IsTiltEnabled="True">
+										<HyperlinkButton NavigateUri="{Binding ArticleLink}" TargetName="_blank" Margin="0,12,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Style="{StaticResource EmptyButtonStyle}" Click="HyperlinkButton_Click">
+
+											<StackPanel>
+												<Border Background="#225F02" Width="6" HorizontalAlignment="Left" />
+												<TextBlock Style="{StaticResource PhoneTextTitle2Style}" Text="{Binding Title}" TextWrapping="Wrap" />
+												<TextBlock Style="{StaticResource PhoneTextNormalStyle}" Text="{Binding Description}" />
+												<TextBlock Style="{StaticResource PhoneTextNormalStyle}" Foreground="{StaticResource PhoneSubtleBrush}" Text="Yahoo! Canada Sports - NHL - Vancouver Canucks News (Read More)" />
+											</StackPanel>
+
+										</HyperlinkButton>
+										<StackPanel.Projection>
+											<PlaneProjection CenterOfRotationX="0" RotationY="-90" />
+										</StackPanel.Projection>
+										<i:Interaction.Behaviors>
+											<ib:LoadedBehavior />
+										</i:Interaction.Behaviors>
+									</StackPanel>
+								</Grid>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+				</Grid>
+			</controls:PanoramaItem>
+
+			<controls:PanoramaItem Header="featured" Orientation="Horizontal">
+				<Grid>
+					<ListBox x:Name="RecentList" Margin="0,0,-12,0" ItemsSource="{Binding Features}">
+						<ListBox.ItemsPanel>
+							<ItemsPanelTemplate>
+								<toolkit:WrapPanel ItemWidth="200" ItemHeight="200" Orientation="Horizontal" Width="900" />
+							</ItemsPanelTemplate>
+						</ListBox.ItemsPanel>
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<HyperlinkButton NavigateUri="{Binding ArticleLink}" TargetName="_blank" Margin="0,12,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Style="{StaticResource EmptyButtonStyle}">
+
+									<Grid Margin="0,5,0,5">
+										<Image Margin="12,0,0,0" Name="ShowImage" Stretch="UniformToFill" Height="180" Width="200" Source="{Binding ImageUrl}" HorizontalAlignment="Center"></Image>
+										<StackPanel VerticalAlignment="Bottom" Background="#AF000000">
+											<TextBlock VerticalAlignment="Bottom" Text="{Binding Title}" Style="{StaticResource PhoneTextTitle3Style}" Foreground="White" />
+										</StackPanel>
+										<Grid.Projection>
+											<PlaneProjection CenterOfRotationX="0" RotationY="-90" />
+										</Grid.Projection>
+										<i:Interaction.Behaviors>
+											<ib:LoadedBehavior />
+										</i:Interaction.Behaviors>
+									</Grid>
+								</HyperlinkButton>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+
+					</ListBox>
+				</Grid>
+			</controls:PanoramaItem>
+			<controls:PanoramaItem Header="news feeds">
+                <StackPanel>
+				<Grid>
+					<ListBox Margin="0,0,-12,0" x:Name="NewsFeeds" ItemsSource="{Binding FeedInfo}">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<Grid>
+									<StackPanel Margin="0,0,0,0" toolkit:TiltEffect.IsTiltEnabled="True">
+										<HyperlinkButton TargetName="_blank" Margin="0,12,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Style="{StaticResource EmptyButtonStyle}" Click="NewsFeedLink_Click" Tag="{Binding Key}">
+
+											<StackPanel>
+												<TextBlock Style="{StaticResource PhoneTextTitle2Style}" Text="{Binding FeedName}" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="{StaticResource PhoneFontFamilyLight}" FontSize="{StaticResource PhoneFontSizeExtraLarge}" Foreground="{StaticResource PhoneForegroundBrush}" TextWrapping="Wrap" LineStackingStrategy="BlockLineHeight" LineHeight="43" Margin="12,27,0,24" />
+											</StackPanel>
+										</HyperlinkButton>
+									</StackPanel>
+								</Grid>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+				</Grid>
+                    <my:AdControl AdUnitId="10028854" Name="adControl3" ApplicationId="342cc298-e567-4776-b5f2-3fbc2ed10487" HorizontalAlignment="Center" Width="480" Height="80" />
+                </StackPanel>
+            </controls:PanoramaItem>
+			<controls:PanoramaItem Header="twitter">
+				<Grid>
+					<ListBox x:Name="TwitterListBox" Margin="0" ItemsSource="{Binding Twitter}">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<Grid>
+									<!--Background="{Binding TwitterLink,  Mode=OneWay, Converter={StaticResource BGConverter}}"-->
+									<HyperlinkButton NavigateUri="{Binding TwitterLink}" TargetName="_blank" VerticalAlignment="Top" Style="{StaticResource EmptyButtonStyle}" Margin="0,30,0,0">
+										<Grid>
+											<StackPanel Margin="15,0,0,15">
+												<TextBlock TextWrapping="Wrap" Text="{Binding Text}" Style="{StaticResource PhoneTextTitle3Style}" />
+
+												<TextBlock Text="{Binding Date}" TextWrapping="NoWrap" Style="{StaticResource PhoneTextNormalStyle}" Foreground="{StaticResource PhoneSubtleBrush}" />
+											</StackPanel>
+										</Grid>
+									</HyperlinkButton>
+								</Grid>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+				</Grid>
+			</controls:PanoramaItem>
+		</controls:Panorama>
+	</Grid>
+
+
+	<!--Sample code showing usage of ApplicationBar-->
+	<phone:PhoneApplicationPage.ApplicationBar>
+        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True" Mode="Minimized">
+           <shell:ApplicationBarIconButton IconUri="/Images/appbar.refresh.rest.png" Text="Refresh" Click="ApplicationBarIconButton_Click"/>
+            <shell:ApplicationBar.MenuItems>
+                <shell:ApplicationBarMenuItem Click="ApplicationBarMenuItem_Click" Text="about" />
+            </shell:ApplicationBar.MenuItems>
+        </shell:ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>
+</phone:PhoneApplicationPage>
