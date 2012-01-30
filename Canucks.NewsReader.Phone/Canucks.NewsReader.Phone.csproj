@@ -93,6 +93,9 @@
     <Compile Include="FinalScores.xaml.cs">
       <DependentUpon>FinalScores.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\Theme.cs" />
+    <Compile Include="Helpers\Settings.cs" />
+    <Compile Include="MetroGridHelper.cs" />
     <Compile Include="Services\Contracts\ITwitterService.cs" />
     <Compile Include="Services\Contracts\IScheduleService.cs" />
     <Compile Include="Services\FinalScoreService.cs" />
@@ -160,7 +163,7 @@
     <None Include="Properties\WMAppManifest.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Images\appbar.refresh.rest.png">
+    <Content Include="Images\Dark\appbar.refresh.rest.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="appbar.refresh.rest.png" />
@@ -173,6 +176,9 @@
     </Content>
     <Resource Include="Images\defaultimage.png" />
     <Resource Include="Images\CanucksTile.png" />
+    <Content Include="Images\Light\appbar.refresh.rest.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="SplashScreenImage.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

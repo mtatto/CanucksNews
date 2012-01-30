@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using Canucks.NewsReader.Common.Helpers;
 using Canucks.NewsReader.Common.Model;
@@ -22,12 +23,19 @@ namespace Canucks.NewsReader.Phone
 
         private static FinalScoresViewModel _finalScoresViewModel;
 
+        public static Theme CurrentTheme;
+
+        public static BitmapImage RefreshImage;
         /// <summary>
         /// Constructor for the Application object.
         /// </summary>
         public App()
         {
             SmartDispatcher.Initialize(Deployment.Current.Dispatcher);
+
+            CurrentTheme = ThemeSettings.Instance.CurrentTheme;
+
+            SetRefreshImageSource();
 
             // Global handler for uncaught exceptions. 
             UnhandledException += Application_UnhandledException;
@@ -43,6 +51,8 @@ namespace Canucks.NewsReader.Phone
             {
                 // Display the current frame rate counters.
                 Current.Host.Settings.EnableFrameRateCounter = true;
+
+                MetroGridHelper.IsVisible = true;
 
                 // Show the areas of the app that are being redrawn in each frame.
                 //Application.Current.Host.Settings.EnableRedrawRegions = true;
@@ -178,6 +188,11 @@ namespace Canucks.NewsReader.Phone
                                        Title = "Sorry about this"
                                    };
             }
+        }
+
+        private static void SetRefreshImageSource()
+        {
+            RefreshImage = CurrentTheme == Theme.Dark ? new BitmapImage(new Uri("Images/Dark/appbar.refresh.rest.png", UriKind.Relative)) : new BitmapImage(new Uri("Images/Light/appbar.refresh.rest.png", UriKind.Relative));
         }
 
         #region Phone application initialization

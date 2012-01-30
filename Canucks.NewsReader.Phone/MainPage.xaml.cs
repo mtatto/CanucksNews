@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Globalization;
 using System.Net.NetworkInformation;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Microsoft.Phone.Tasks;
+using GestureEventArgs = System.Windows.Input.GestureEventArgs;
 
 namespace Canucks.NewsReader.Phone
 {
@@ -12,6 +14,7 @@ namespace Canucks.NewsReader.Phone
     {
         private bool _onNavigatedToCalled = true;
 
+        private static int _currentFeaturePage = 1;
 
         // Constructor
         public MainPage()
@@ -22,6 +25,7 @@ namespace Canucks.NewsReader.Phone
 
             DataContext = App.MainViewModel;
             SystemTray.SetOpacity(this, 0.0);
+            SetRefreshImage();
         }
 
         private void MainPageLayoutUpdated(object sender, EventArgs e)
@@ -40,6 +44,13 @@ namespace Canucks.NewsReader.Phone
                                            }
                     );
             }
+        }
+
+        private void SetRefreshImage()
+        {
+            TwitterRefresh.Source = App.RefreshImage;
+            ScheduleRefresh.Source = App.RefreshImage;
+            RecentRefresh.Source = App.RefreshImage;
         }
 
         private void HyperlinkButton_Click(object sender, RoutedEventArgs e)
@@ -74,5 +85,27 @@ namespace Canucks.NewsReader.Phone
         {
             App.MainViewModel.LoadData();
         }
+
+        private void Image_Tap(object sender, GestureEventArgs e)
+        {
+            App.MainViewModel.GetTwitterFeed();
+        }
+
+        private void ScheduleRefresh_Tap(object sender, GestureEventArgs e)
+        {
+            App.MainViewModel.LoadScoresAndSchedules();
+        }
+
+        private void RecentRefresh_Tap(object sender, GestureEventArgs e)
+        {
+            App.MainViewModel.GetNewsStream();
+        }
+
+
+        private void lnkbtgetMoreNews_Click(object sender, RoutedEventArgs e)
+        {
+            _currentFeaturePage++;
+            App.MainViewModel.AddToNewsStream(_currentFeaturePage.ToString(CultureInfo.InvariantCulture));
+        } 
     }
 }

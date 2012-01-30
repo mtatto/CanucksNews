@@ -33,7 +33,7 @@ namespace Canucks.NewsReader.Phone.Services
         {
             _newsStream = new ObservableCollection<NewsStreamItem>();
             var loadedEventArgs = new LoadEventArgs();
-            string queryString = string.Format("{0}?team={1}&startpage={2}&pageSize={3}", Settings.StreamUrl,
+            string queryString = string.Format("{0}?team={1}&start={2}&pageSize={3}", Settings.StreamUrl,
                                                team ?? "", start ?? "", pageSize ?? "");
 
             var wb = new WebClient();

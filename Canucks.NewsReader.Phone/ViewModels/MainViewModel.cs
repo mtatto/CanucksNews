@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Windows.Threading;
 using Canucks.NewsReader.Common.Helpers;
 using Canucks.NewsReader.Common.Model;
 using Canucks.NewsReader.Phone.Helpers;
@@ -119,6 +122,7 @@ namespace Canucks.NewsReader.Phone.ViewModels
         private static void ServiceTwitterLoaded(object sender, LoadEventArgs e)
         {
             GlobalLoading.Instance.IsLoading = !e.IsLoaded;
+            
         }
 
         private static void ServiceFeaturesLoaded(object sender, LoadEventArgs e)
@@ -126,12 +130,18 @@ namespace Canucks.NewsReader.Phone.ViewModels
             GlobalLoading.Instance.IsLoading = !e.IsLoaded;
         }
 
-        private void GetNewsStream()
+        internal void GetNewsStream(string start = "1", string pageSize ="15", bool refresh = false)
         {
             GlobalLoading.Instance.IsLoading = true;
             try
             {
-                StreamItems = Service.GetNewsStream("canucks", "1", "15");
+                if (refresh)
+                {
+                    StreamItems.Clear();
+                }
+                StreamItems = Service.GetNewsStream("canucks", start, pageSize);
+
+                NotifyPropertyChanged("StreamItems");
             }
             catch (Exception)
             {
@@ -139,6 +149,27 @@ namespace Canucks.NewsReader.Phone.ViewModels
             }
         }
 
+        internal void AddToNewsStream(string start, string pageSize ="15")
+        {
+            GlobalLoading.Instance.IsLoading = true;
+            try
+            {
+
+                ObservableCollection<NewsStreamItem> newItems = Service.GetNewsStream("canucks", start, pageSize);
+
+                newItems.CollectionChanged += (o, i) =>
+                                                  {
+                                                      IList t = i.NewItems;
+                                                      StreamItems.Add(t.OfType<NewsStreamItem>().Last());
+                                                  };
+              
+                NotifyPropertyChanged("StreamItems");
+            }
+            catch (Exception)
+            {
+                _errors.Add("news stream");
+            }
+        }
         private void GetFeatures()
         {
             GlobalLoading.Instance.IsLoading = true;
@@ -158,7 +189,17 @@ namespace Canucks.NewsReader.Phone.ViewModels
             GlobalLoading.Instance.IsLoading = true;
             try
             {
-                UpComingSchedule = ScheduleService.GetUpcomingSchedule("1", "2");
+                if (UpComingSchedule == null)
+                {
+                    UpComingSchedule = ScheduleService.GetUpcomingSchedule("1", "2");
+                }
+                else
+                {
+                    UpComingSchedule.Clear();
+                    UpComingSchedule = ScheduleService.GetUpcomingSchedule("1", "2");
+                }
+
+                NotifyPropertyChanged("UpComingSchedule");
             }
             catch (Exception)
             {
@@ -172,6 +213,8 @@ namespace Canucks.NewsReader.Phone.ViewModels
             try
             {
                 CompletedSchedule = FinalScoreService.GetFinalScores("1", "2");
+
+               // CompletedSchedule.CollectionChanged += CompletedSchedule_CollectionChanged;
             }
             catch (Exception)
             {
@@ -179,18 +222,54 @@ namespace Canucks.NewsReader.Phone.ViewModels
             }
         }
 
-        private void GetTwitterFeed()
+      
+
+        internal void LoadScoresAndSchedules()
+        {
+            GetFinalScores();
+            GetUpcomingItems();
+        }
+        internal void GetTwitterFeed()
         {
             GlobalLoading.Instance.IsLoading = true;
             try
             {
-                Twitter = TwitterService.GetFeed();
+                if (Twitter == null)
+                {
+                    Twitter = TwitterService.GetFeed();
+                }
+                else
+                {
+                    Twitter.Clear();
+                    Twitter = TwitterService.GetFeed();
+                }
+
+
+                NotifyPropertyChanged("Twitter");
             }
             catch (Exception)
             {
                 _errors.Add("twitter feed");
             }
         }
+
+        //public void TestLoad()
+        //{
+        //    Twitter.Clear();
+        //    Twitter = TwitterService.GetFeed();
+        //    Twitter.Add(new TwitterStatusModel { Date = "eee", Text = "sdfsf", TwitterLink = "sfdsdf" });
+        //    NotifyPropertyChanged("Twitter");
+        //    ////System.Windows.Deployment.Current.Dispatcher.BeginInvoke(() =>
+        //    ////                                                             {
+        //    ////                                                                 Twitter = TwitterService.GetFeed();
+        //    ////                                                                 Twitter.Add(new TwitterStatusModel { Date = "eee", Text = "sdfsf", TwitterLink = "sfdsdf" });
+        //    ////                                                                 NotifyPropertyChanged("Twitter");
+        //    ////                                                             });
+
+
+
+
+        //}
 
         public void LoadData()
         {
@@ -202,8 +281,7 @@ namespace Canucks.NewsReader.Phone.ViewModels
             }
             else
             {
-                GetUpcomingItems();
-                GetFinalScores();
+                LoadScoresAndSchedules();
                 GetNewsStream();
                 GetFeatures();
                 GetTwitterFeed();
