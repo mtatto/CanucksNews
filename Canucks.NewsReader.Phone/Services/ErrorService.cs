@@ -23,7 +23,7 @@ namespace Canucks.NewsReader.Phone.Services
 
             if (string.IsNullOrWhiteSpace(_title))
             {
-                _title = @"Something bad happened...:(";
+                _title = @"Something bad happened...";
             }
         }
 

@@ -10,6 +10,7 @@ using Canucks.NewsReader.Common.Model;
 using Canucks.NewsReader.Phone.Helpers;
 using Canucks.NewsReader.Phone.Services.Contracts;
 using Microsoft.Phone.Reactive;
+using SharpGIS;
 
 namespace Canucks.NewsReader.Phone.Services
 {
@@ -26,17 +27,27 @@ namespace Canucks.NewsReader.Phone.Services
 
         public event LoadEventHandler ServiceLoaded;
 
-        public ObservableCollectionEx<TwitterStatusModel> GetFeed()
+        public ObservableCollectionEx<TwitterStatusModel> GetFeed(Uri twitterFeed = null)
         {
-            _twitterFeed = new ObservableCollectionEx<TwitterStatusModel>();
-            var wc = new WebClient();
+            if (twitterFeed == null)
+            {
+                twitterFeed = new Uri(Settings.TwitterFeedUri);
+            }
+
+            var twitterStatus = new ObservableCollectionEx<TwitterStatusModel>();
+            RetrieveTwitterValues(twitterFeed, twitterStatus);
+            return twitterStatus;
+        }
+
+        private void RetrieveTwitterValues(Uri twitterFeed, ObservableCollectionEx<TwitterStatusModel> twitterStatus )
+        {
+            var wc = new GZipWebClient();
+
             ErrorService service = new ErrorService("Unable to retrieve the twitter feed.", "").ErrorDialog(true);
 
             var loadedEventArgs = new LoadEventArgs();
             IObservable<IEvent<DownloadStringCompletedEventArgs>> o = Observable.FromEvent
-                <DownloadStringCompletedEventArgs>(wc, "DownloadStringCompleted")
-                .ObserveOn(Scheduler.ThreadPool)
-                .ObserveOn(Scheduler.Dispatcher);
+                <DownloadStringCompletedEventArgs>(wc, "DownloadStringCompleted");
 
             o.Subscribe(s =>
                             {
@@ -48,7 +59,7 @@ namespace Canucks.NewsReader.Phone.Services
                                         if (!String.IsNullOrWhiteSpace(twitterResults))
                                         {
                                             XDocument doc = XDocument.Parse(twitterResults);
-                                            ParseTwitterResults(doc);
+                                            ParseTwitterResults(doc, twitterStatus);
                                         }
                                         else
                                         {
@@ -80,17 +91,16 @@ namespace Canucks.NewsReader.Phone.Services
                                    }
                 );
 
-            wc.DownloadStringAsync(new Uri(Settings.TwitterFeedUri));
-            return _twitterFeed;
+            wc.DownloadStringAsync(twitterFeed);
         }
 
         #endregion
 
-        private void ParseTwitterResults(XDocument doc)
+        private void ParseTwitterResults(XDocument doc, ObservableCollectionEx<TwitterStatusModel> feedModel)
         {
             foreach (TwitterStatusModel model in doc.Descendants("status").Select(BuildTwitterStatusl))
             {
-                _twitterFeed.Add(model);
+                feedModel.Add(model);
             }
         }
 
@@ -118,6 +128,11 @@ namespace Canucks.NewsReader.Phone.Services
                                                       IndexOf(
                                                           '+'))
                        : "";
+        }
+
+        private ObservableCollectionEx<TwitterStatusModel> GetNewTwitterStatusModel()
+        {
+            return new ObservableCollectionEx<TwitterStatusModel>();
         }
 
         protected string CreateLink(string txt)

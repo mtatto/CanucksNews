@@ -50,6 +50,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="JeffWilcox.Maps">
+      <HintPath>..\packages\JeffWilcox.Maps.1.1\lib\sl4-windowsphone71\JeffWilcox.Maps.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Advertising.Mobile, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="Microsoft.Advertising.Mobile.UI, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="Microsoft.Expression.Drawing" />
@@ -64,6 +67,9 @@
     <Reference Include="Microsoft.Phone.Interop" />
     <Reference Include="Microsoft.Phone.Reactive" />
     <Reference Include="Microsoft.Xna.Framework" />
+    <Reference Include="SharpGIS.GZipWebClient">
+      <HintPath>..\packages\SharpGIS.GZipWebClient.1.2\lib\sl40-wp71\SharpGIS.GZipWebClient.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Device" />
     <Reference Include="System.Observable" />
@@ -78,10 +84,26 @@
     <Reference Include="System.Xml" />
     <Reference Include="mscorlib.extensions" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="TombstoneHelper">
+      <HintPath>..\packages\WP7TombstoneHelper.2.5\lib\TombstoneHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="YourLastAboutDialog">
+      <HintPath>..\packages\YLAD.1.3\lib\sl40-wp71\YourLastAboutDialog.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="About.xaml.cs">
-      <DependentUpon>About.xaml</DependentUpon>
+    <Compile Include="ViewModels\TwitterViewModel.cs" />
+    <Compile Include="Views\FinalScores.xaml.cs">
+      <DependentUpon>FinalScores.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\NewsFeed.xaml.cs">
+      <DependentUpon>NewsFeed.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Schedule.xaml.cs">
+      <DependentUpon>Schedule.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SystemSettings.xaml.cs">
+      <DependentUpon>SystemSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -90,11 +112,8 @@
     <Compile Include="Error.xaml.cs">
       <DependentUpon>Error.xaml</DependentUpon>
     </Compile>
-    <Compile Include="FinalScores.xaml.cs">
-      <DependentUpon>FinalScores.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Helpers\Theme.cs" />
-    <Compile Include="Helpers\Settings.cs" />
+    <Compile Include="Helpers\ThemeSettings.cs" />
     <Compile Include="MetroGridHelper.cs" />
     <Compile Include="Services\Contracts\ITwitterService.cs" />
     <Compile Include="Services\Contracts\IScheduleService.cs" />
@@ -110,13 +129,7 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NewsFeed.xaml.cs">
-      <DependentUpon>NewsFeed.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Schedule.xaml.cs">
-      <DependentUpon>Schedule.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Services\Contracts\INewsService.cs" />
     <Compile Include="Services\ErrorService.cs" />
     <Compile Include="Services\NewsService.cs" />
@@ -126,21 +139,32 @@
     <Compile Include="ViewModels\ScheduleViewModel.cs" />
     <Compile Include="ViewModels\TwitterApiResponse.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\Twitter.xaml.cs">
+      <DependentUpon>Twitter.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
-    <Page Include="About.xaml">
-      <Generator>MSBuild:MarkupCompilePass1</Generator>
+    <Page Include="Views\FinalScores.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\NewsFeed.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Schedule.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SystemSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Error.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="FinalScores.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -148,11 +172,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="NewsFeed.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Schedule.xaml">
+    <Page Include="Views\Twitter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -163,6 +183,9 @@
     <None Include="Properties\WMAppManifest.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\About\Data.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Images\Dark\appbar.refresh.rest.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -187,6 +210,10 @@
     <ProjectReference Include="..\Canucks.NewsReader.Common\Canucks.NewsReader.Common.csproj">
       <Project>{277C426F-6D43-4487-824F-0371C9A88490}</Project>
       <Name>Canucks.NewsReader.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CanucksNewsScheduler\CanucksNewsScheduler.csproj">
+      <Project>{E6FEEA76-0831-4264-8472-FABD39F68956}</Project>
+      <Name>CanucksNewsScheduler</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

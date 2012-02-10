@@ -5,12 +5,16 @@
     
 xmlns:primitives="clr-namespace:System.Windows.Controls.Primitives;assembly=System.Windows"
     xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
-    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone">
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:core="clr-namespace:System;assembly=mscorlib">
 
     <!--Application Resources-->
     <Application.Resources>
         <!-- http://www.jeff.wilcox.name/2011/10/hyperlinkbutton-empty-style-for-phone/-->
-
+        
+            <core:String x:Key="BingMapsKey">
+            AqRcmAfGi4XQuw55uFdxicA2ovDDaFUVG3zYZHzoUwnSpHcdn3MJIKTzM5A_nK5U
+        </core:String>
         <Style x:Key="EmptyButtonStyle" TargetType="primitives:ButtonBase">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Padding" Value="0" />

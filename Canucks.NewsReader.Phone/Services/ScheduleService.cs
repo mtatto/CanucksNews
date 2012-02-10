@@ -24,7 +24,7 @@ namespace Canucks.NewsReader.Phone.Services
 
             string queryString = String.Format("{0}?start={1}&pageSize={2}", Settings.Upcoming, pageStart ?? "",
                                                pageSize ?? "");
-            var wb = new WebClient();
+            var wb = new SharpGIS.GZipWebClient();
             Observable.FromEvent<DownloadStringCompletedEventArgs>(wb, "DownloadStringCompleted")
                 .ObserveOn(Scheduler.ThreadPool)
                 .Select(x => ProcessUpcomingItems(x.EventArgs.Result))
@@ -35,6 +35,7 @@ namespace Canucks.NewsReader.Phone.Services
                                    loadedEventArgs.Message = "";
                                    foreach (UpComingSchedule upComingSchedule in s)
                                    {
+                                       InsertIntoIS(upComingSchedule);
                                        _upcoming.Add(ConvertToView(upComingSchedule));
                                    }
                                    OnUpcomingScheduleLoaded(loadedEventArgs);
@@ -83,6 +84,24 @@ namespace Canucks.NewsReader.Phone.Services
             }
 
             return returnType;
+        }
+
+        private void InsertIntoIS(UpComingSchedule upComingSchedule)
+        {
+            
+            if (App.isoSettings.Contains("UpComing"))
+            {
+                var upcoming = App.isoSettings["UpComing"].ToString();
+                if (string.IsNullOrWhiteSpace(upcoming))
+                {
+                    if (!string.IsNullOrWhiteSpace(upComingSchedule.HomeTeam) && (!string.IsNullOrWhiteSpace(upComingSchedule.VisitingTeam)))
+                    {
+                        var input = ConvertToView(upComingSchedule);
+                        App.isoSettings["UpComing"] = input.Teams;
+                    }
+                    
+                }
+            }
         }
 
         protected virtual void OnUpcomingScheduleLoaded(LoadEventArgs e)

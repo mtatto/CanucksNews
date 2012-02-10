@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Canucks.NewsReader.Phone", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Canucks.NewsReader.Common", "Canucks.NewsReader.Common\Canucks.NewsReader.Common.csproj", "{277C426F-6D43-4487-824F-0371C9A88490}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CanucksNewsScheduler", "CanucksNewsScheduler\CanucksNewsScheduler.csproj", "{E6FEEA76-0831-4264-8472-FABD39F68956}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{277C426F-6D43-4487-824F-0371C9A88490}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{277C426F-6D43-4487-824F-0371C9A88490}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{277C426F-6D43-4487-824F-0371C9A88490}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6FEEA76-0831-4264-8472-FABD39F68956}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6FEEA76-0831-4264-8472-FABD39F68956}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6FEEA76-0831-4264-8472-FABD39F68956}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6FEEA76-0831-4264-8472-FABD39F68956}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

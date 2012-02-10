@@ -5,12 +5,36 @@
                             xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
                             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                            xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
                             FontFamily="{StaticResource PhoneFontFamilyNormal}" FontSize="{StaticResource PhoneFontSizeNormal}"
                             Foreground="{StaticResource PhoneForegroundBrush}" SupportedOrientations="Portrait" Orientation="Portrait"
                             mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480" shell:SystemTray.IsVisible="True">
 
   <!--LayoutRoot is the root grid where all page content is placed-->
-  <Grid x:Name="LayoutRoot" Background="Transparent">
+
+    <toolkit:TransitionService.NavigationInTransition>
+        <toolkit:NavigationInTransition>
+            <toolkit:NavigationInTransition.Backward>
+                <toolkit:TurnstileTransition Mode="BackwardIn"/>
+            </toolkit:NavigationInTransition.Backward>
+            <toolkit:NavigationInTransition.Forward>
+                <toolkit:TurnstileTransition Mode="ForwardIn"/>
+            </toolkit:NavigationInTransition.Forward>
+        </toolkit:NavigationInTransition>
+    </toolkit:TransitionService.NavigationInTransition>
+
+    <toolkit:TransitionService.NavigationOutTransition>
+        <toolkit:NavigationOutTransition>
+            <toolkit:NavigationOutTransition.Backward>
+                <toolkit:TurnstileTransition Mode="BackwardOut"/>
+            </toolkit:NavigationOutTransition.Backward>
+            <toolkit:NavigationOutTransition.Forward>
+                <toolkit:TurnstileTransition Mode="ForwardOut"/>
+            </toolkit:NavigationOutTransition.Forward>
+        </toolkit:NavigationOutTransition>
+    </toolkit:TransitionService.NavigationOutTransition>
+    
+    <Grid x:Name="LayoutRoot" Background="Transparent">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
@@ -24,25 +48,25 @@
 
     <!--ContentPanel - place additional content here-->
     <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
-      <StackPanel Margin="0,8,0,-34">
-                <TextBlock x:Name="mTitle" Style="{StaticResource PhoneTextTitle2Style}" TextWrapping="Wrap" />
+      <StackPanel Margin="0,8,0,0">
+                <TextBlock x:Name="mTitle" Style="{StaticResource PhoneTextTitle2Style}" TextWrapping="Wrap" Margin="12,0,12,-61" />
         <TextBlock x:Name="FMessage" Style="{StaticResource PhoneTextTitle2Style}" Padding="0, 30, 0, 0"
-                   TextWrapping="Wrap" />
+                   TextWrapping="Wrap" Foreground="{StaticResource PhoneAccentBrush}" Margin="12,66,8,3" Height="141" />
         <TextBlock x:Name="StackTraceHeader" Style="{StaticResource PhoneTextTitle3Style}" Padding="0, 20, 0, 0"
-                   Text="Stack Trace" Margin="12,0" TextWrapping="Wrap" />
+                   Text="Stack Trace" Margin="12,0,12,9" TextWrapping="Wrap" />
+        <Border x:Name="StackBorder" BorderThickness="1" BorderBrush="{StaticResource PhoneSubtleBrush}" Height="187" Margin="12,0">
+        	<ScrollViewer Margin="7,8,7,64">
 
-        <Border x:Name="StackBorder" BorderThickness="1" BorderBrush="{StaticResource PhoneSubtleBrush}">
-          <ScrollViewer>
-
-            <TextBlock x:Name="StackTrace" Style="{StaticResource PhoneTextSubtleStyle}" Padding="0, 10, 0, 0"
-                       TextWrapping="Wrap" Height="335" />
-          </ScrollViewer>
+        		<TextBlock x:Name="StackTrace" Style="{StaticResource PhoneTextSubtleStyle}" Padding="0, 10, 0, 0"
+        			TextWrapping="Wrap" Height="370" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        	</ScrollViewer>
         </Border>
+        <Button x:Name="btnSubmit" Content="Send an email to report error" Click="btnSubmit_Click" />
       </StackPanel>
     </Grid>
 
     <StackPanel Grid.Row="1" VerticalAlignment="Bottom">
-      <Button x:Name="btnRetry" Content="Try again" Click="btnRetry_Click" />
+      <Button x:Name="btnRetry" Content="Re-try Canucks News" Click="btnRetry_Click" Margin="12,0" />
     </StackPanel>
   </Grid>
  

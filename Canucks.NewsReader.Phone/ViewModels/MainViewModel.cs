@@ -2,10 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Net.NetworkInformation;
-using System.Windows.Threading;
 using Canucks.NewsReader.Common.Helpers;
 using Canucks.NewsReader.Common.Model;
 using Canucks.NewsReader.Phone.Helpers;
@@ -236,12 +234,12 @@ namespace Canucks.NewsReader.Phone.ViewModels
             {
                 if (Twitter == null)
                 {
-                    Twitter = TwitterService.GetFeed();
+                    Twitter = TwitterService.GetFeed(null);
                 }
                 else
                 {
                     Twitter.Clear();
-                    Twitter = TwitterService.GetFeed();
+                    Twitter = TwitterService.GetFeed(null);
                 }
 
 
@@ -252,24 +250,6 @@ namespace Canucks.NewsReader.Phone.ViewModels
                 _errors.Add("twitter feed");
             }
         }
-
-        //public void TestLoad()
-        //{
-        //    Twitter.Clear();
-        //    Twitter = TwitterService.GetFeed();
-        //    Twitter.Add(new TwitterStatusModel { Date = "eee", Text = "sdfsf", TwitterLink = "sfdsdf" });
-        //    NotifyPropertyChanged("Twitter");
-        //    ////System.Windows.Deployment.Current.Dispatcher.BeginInvoke(() =>
-        //    ////                                                             {
-        //    ////                                                                 Twitter = TwitterService.GetFeed();
-        //    ////                                                                 Twitter.Add(new TwitterStatusModel { Date = "eee", Text = "sdfsf", TwitterLink = "sfdsdf" });
-        //    ////                                                                 NotifyPropertyChanged("Twitter");
-        //    ////                                                             });
-
-
-
-
-        //}
 
         public void LoadData()
         {
@@ -287,9 +267,11 @@ namespace Canucks.NewsReader.Phone.ViewModels
                 GetTwitterFeed();
                 FeedInfo = new List<FeedInfo>
                                {
-                                   new FeedInfo {Id = 1, Key = "canuckscom", FeedName = "canucks.com"},
-                                   new FeedInfo {Id = 2, Key = "thevancouversun", FeedName = "the vancouver sun"},
-                                   new FeedInfo {Id = 3, Key = "theprovince", FeedName = "the province"}
+                                   new FeedInfo {Id = 1, Key = "twitter", FeedName = "twitter"},
+                                   new FeedInfo {Id = 2, Key = "canuckscom", FeedName = "canucks.com"},
+                                   new FeedInfo {Id = 3, Key = "thevancouversun", FeedName = "the vancouver sun"},
+                                   new FeedInfo {Id = 4, Key = "theprovince", FeedName = "the province"},
+                                   
                                };
                 CheckForErrors();
             }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO.IsolatedStorage;
+using System.Net;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -23,9 +25,14 @@ namespace Canucks.NewsReader.Phone
 
         private static FinalScoresViewModel _finalScoresViewModel;
 
+        private static TwitterViewModel _twitterViewModel;
+
         public static Theme CurrentTheme;
 
+        public static IsolatedStorageSettings isoSettings;
+
         public static BitmapImage RefreshImage;
+
         /// <summary>
         /// Constructor for the Application object.
         /// </summary>
@@ -35,6 +42,7 @@ namespace Canucks.NewsReader.Phone
 
             CurrentTheme = ThemeSettings.Instance.CurrentTheme;
 
+            isoSettings = IsolatedStorageSettings.ApplicationSettings;
             SetRefreshImageSource();
 
             // Global handler for uncaught exceptions. 
@@ -105,11 +113,39 @@ namespace Canucks.NewsReader.Phone
             get { return _finalScoresViewModel ?? (_finalScoresViewModel = new FinalScoresViewModel()); }
         }
 
+        public static TwitterViewModel TwitterViewModel
+        {
+            get { return _twitterViewModel ?? (_twitterViewModel = new TwitterViewModel()); }
+        }
         // Code to execute when the application is launching (eg, from Start)
         // This code will not execute when the application is reactivated
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
         }
+
+        //private void CreateLiveTile()
+        //{
+
+        //    // Application Tile is always the first Tile, even if it is not pinned to Start.
+        //    var tileToFind = ShellTile.ActiveTiles.First();
+
+        //    // Application should always be found
+        //    if (tileToFind != null)
+        //    {
+        //        // Set the properties to update for the Application Tile.
+        //        // Empty strings for the text values and URIs will result in the property being cleared.
+        //        var newTileData = new StandardTileData
+        //        {
+        //            Title = "Canucks News",
+        //            BackTitle = "Schedule",
+        //            BackContent = "Upcoming" + System.Environment.NewLine + "Final"
+
+        //        };
+
+        //        // Update the Application Tile
+        //        tileToFind.Update(newTileData);
+        //    }
+        //}
 
         // Code to execute when the application is activated (brought to foreground)
         // This code will not execute when the application is first launched
@@ -150,7 +186,7 @@ namespace Canucks.NewsReader.Phone
 
             else
             {
-                var rootSource = RootVisual as PhoneApplicationFrame;
+                var rootSource = RootVisual as TransitionFrame;
 
                 if (rootSource != null)
                 {
@@ -175,7 +211,7 @@ namespace Canucks.NewsReader.Phone
                 CurrentError = new ErrorMessage
                                    {
                                        Error = exception,
-                                       FriendlyError = "Something bad happened. :(",
+                                       FriendlyError = "Something bad happened.",
                                        Title = "Sorry about this"
                                    };
             }
@@ -184,7 +220,7 @@ namespace Canucks.NewsReader.Phone
                 CurrentError = new ErrorMessage
                                    {
                                        Error = null,
-                                       FriendlyError = "Something bad happened...but we don't know what :(",
+                                       FriendlyError = "Something bad happened...but we don't know what.",
                                        Title = "Sorry about this"
                                    };
             }
@@ -192,7 +228,9 @@ namespace Canucks.NewsReader.Phone
 
         private static void SetRefreshImageSource()
         {
-            RefreshImage = CurrentTheme == Theme.Dark ? new BitmapImage(new Uri("Images/Dark/appbar.refresh.rest.png", UriKind.Relative)) : new BitmapImage(new Uri("Images/Light/appbar.refresh.rest.png", UriKind.Relative));
+            RefreshImage = CurrentTheme == Theme.Dark
+                               ? new BitmapImage(new Uri("Images/Dark/appbar.refresh.rest.png", UriKind.Relative))
+                               : new BitmapImage(new Uri("Images/Light/appbar.refresh.rest.png", UriKind.Relative));
         }
 
         #region Phone application initialization
@@ -208,7 +246,9 @@ namespace Canucks.NewsReader.Phone
 
             // Create the frame but don't set it as RootVisual yet; this allows the splash
             // screen to remain active until the application is ready to render.
-            RootFrame = new PhoneApplicationFrame();
+            //RootFrame = new PhoneApplicationFrame();
+            RootFrame = new TransitionFrame();
+
             RootFrame.Navigated += CompleteInitializePhoneApplication;
 
             // Handle navigation failures

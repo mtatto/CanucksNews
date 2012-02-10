@@ -36,7 +36,7 @@ namespace Canucks.NewsReader.Phone.Services
             string queryString = string.Format("{0}?team={1}&start={2}&pageSize={3}", Settings.StreamUrl,
                                                team ?? "", start ?? "", pageSize ?? "");
 
-            var wb = new WebClient();
+            var wb = new SharpGIS.GZipWebClient();
             Observable.FromEvent<DownloadStringCompletedEventArgs>(wb, "DownloadStringCompleted")
 
                 // Let's make sure that we’re on the thread pool
@@ -93,7 +93,7 @@ namespace Canucks.NewsReader.Phone.Services
             var loadedEventArgs = new LoadEventArgs();
             string queryString = string.Format("{0}?feed={1}&pageSize={2}", Settings.NewsUrl, newsFeed ?? "",
                                                storyCount ?? "");
-            var webClient = new WebClient();
+            var webClient = new SharpGIS.GZipWebClient();
 
             Observable.FromEvent<DownloadStringCompletedEventArgs>(webClient, "DownloadStringCompleted")
                 .ObserveOn(Scheduler.ThreadPool)
@@ -141,7 +141,7 @@ namespace Canucks.NewsReader.Phone.Services
             string qS = string.Format("{0}?feed={1}&pageSize={2}", Settings.FeaturesUrl, team ?? "",
                                       pageSize ?? "");
 
-            var wb = new WebClient();
+            var wb = new SharpGIS.GZipWebClient();
             Observable.FromEvent<DownloadStringCompletedEventArgs>(wb, "DownloadStringCompleted")
                 .ObserveOn(Scheduler.ThreadPool)
                 .Select(newString => ProcessFeatures(newString.EventArgs.Result))

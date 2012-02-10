@@ -26,7 +26,7 @@ namespace Canucks.NewsReader.Phone.Services
 
             string queryString = string.Format("{0}?start={1}&pageSize={2}", Settings.FinalScores, pageStart ?? "",
                                                pageSize ?? "");
-            var wb = new WebClient();
+            var wb = new SharpGIS.GZipWebClient();
 
             Observable.FromEvent<DownloadStringCompletedEventArgs>(wb, "DownloadStringCompleted")
                 .ObserveOn(Scheduler.ThreadPool)
@@ -38,6 +38,7 @@ namespace Canucks.NewsReader.Phone.Services
                                    loadedEventArgs.Message = "";
                                    foreach (CompletedSchedule finalScores in s)
                                    {
+                                       InsertIntoIS(finalScores);
                                        _finalScores.Add(ConvertToFinalView(finalScores));
                                    }
                                    OnFinalScoresLoaded(loadedEventArgs);
@@ -88,6 +89,24 @@ namespace Canucks.NewsReader.Phone.Services
 
             return returnType;
         }
+
+        private void InsertIntoIS(CompletedSchedule finalScore)
+        {
+
+            if (App.isoSettings.Contains("FinalKey"))
+            {
+                var fs = App.isoSettings["FinalKey"].ToString();
+                if (string.IsNullOrWhiteSpace(fs))
+                {
+                    if (!string.IsNullOrWhiteSpace(finalScore.FinalScores))
+                    {
+                        App.isoSettings["UpComing"] = finalScore.FinalScores;
+                    }
+
+                }
+            }
+        }
+
 
         protected virtual void OnFinalScoresLoaded(LoadEventArgs e)
         {
