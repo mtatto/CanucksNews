@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Net;
+using System.Threading;
 using Canucks.NewsReader.Common;
 using Canucks.NewsReader.Common.Helpers;
 using Canucks.NewsReader.Common.Model;
@@ -19,12 +21,13 @@ namespace Canucks.NewsReader.Phone.Services
 
         public event LoadEventHandler FinalScoresLoaded;
 
-        public ObservableCollection<CompletedViewSchedule> GetFinalScores(string pageStart, string pageSize)
+        public ObservableCollection<CompletedViewSchedule> GetFinalScores(string url, string pageStart, string pageSize)
         {
             _finalScores = new ObservableCollection<CompletedViewSchedule>();
+            var finalScores2 = new List<CompletedSchedule>();
             var loadedEventArgs = new LoadEventArgs();
 
-            string queryString = string.Format("{0}?start={1}&pageSize={2}", Settings.FinalScores, pageStart ?? "",
+            string queryString = string.Format("{0}?start={1}&pageSize={2}", url, pageStart ?? "",
                                                pageSize ?? "");
             var wb = new SharpGIS.GZipWebClient();
 
@@ -38,9 +41,16 @@ namespace Canucks.NewsReader.Phone.Services
                                    loadedEventArgs.Message = "";
                                    foreach (CompletedSchedule finalScores in s)
                                    {
-                                       InsertIntoIS(finalScores);
+                                       finalScores2.Add(finalScores);
                                        _finalScores.Add(ConvertToFinalView(finalScores));
                                    }
+
+                                   ThreadPool.QueueUserWorkItem(o =>
+                                                                    {
+                                                                        InsertIntoIS(finalScores2);
+                                                                        CacheFinalScores(_finalScores);
+                                                                    });
+
                                    OnFinalScoresLoaded(loadedEventArgs);
                                }, e =>
                                       {
@@ -90,23 +100,39 @@ namespace Canucks.NewsReader.Phone.Services
             return returnType;
         }
 
-        private void InsertIntoIS(CompletedSchedule finalScore)
+        private void InsertIntoIS(List<CompletedSchedule> finalScore)
         {
-
             if (App.isoSettings.Contains("FinalKey"))
             {
                 var fs = App.isoSettings["FinalKey"].ToString();
                 if (string.IsNullOrWhiteSpace(fs))
                 {
-                    if (!string.IsNullOrWhiteSpace(finalScore.FinalScores))
+                    if (finalScore.Any())
                     {
-                        App.isoSettings["UpComing"] = finalScore.FinalScores;
+                        var fscores = finalScore.Last();
+                        if (!string.IsNullOrWhiteSpace(fscores.FinalScores))
+                        {
+                            App.isoSettings["UpComing"] = fscores.FinalScores;
+                        }
                     }
 
                 }
             }
         }
 
+        private static void CacheFinalScores(ObservableCollection<CompletedViewSchedule> finalScores)
+        {
+            if (!(App.isoSettings.Contains("FinalScores")))
+            {
+                string json = JsonHelpers.SerializeJson(finalScores);
+                App.isoSettings.Add("FinalScores", json);
+            }
+            else
+            {
+                string json = JsonHelpers.SerializeJson(finalScores);
+                App.isoSettings["FinalScores"] = json;
+            }
+        }
 
         protected virtual void OnFinalScoresLoaded(LoadEventArgs e)
         {

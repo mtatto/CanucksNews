@@ -1,4 +1,4 @@
-<phone:PhoneApplicationPage 
+﻿<phone:PhoneApplicationPage 
     x:Class="Canucks.NewsReader.Phone.Views.SystemSettings"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -39,7 +39,15 @@
                     <TextBlock HorizontalAlignment="Left" Margin="12,12,0,0" Style="{StaticResource PhoneTextSmallStyle}" TextWrapping="Wrap" 
                            Text="Live tiles update approximately every 30 minutes. They may stop if the phone's system resources are low." Foreground="{StaticResource PhoneSubtleBrush}"
                    VerticalAlignment="Top" Width="436" />
-
+				   <TextBlock HorizontalAlignment="Left" Margin="12,27,-12,0" Style="{StaticResource PhoneTextTitle2Style}" TextWrapping="Wrap" Text="Application Theme"
+                   VerticalAlignment="Top" />
+				   <StackPanel Orientation="Horizontal" Margin="0,0,186,0">
+				   	<RadioButton x:Name="rb_DarkTheme" Content="Dark" GroupName="ThemeGroup" Checked="rb_DarkTheme_Checked" />
+				   	<RadioButton x:Name="rb_LightTheme" Content="Light" GroupName="ThemeGroup" Checked="rb_LightTheme_Checked" />
+				   </StackPanel>
+<TextBlock HorizontalAlignment="Left" Margin="12,12,0,0" Style="{StaticResource PhoneTextSmallStyle}" TextWrapping="Wrap" 
+                           Text="The application must be reset before the new theme will appear." Foreground="{StaticResource PhoneSubtleBrush}"
+                   VerticalAlignment="Top" Width="436" />
                 </StackPanel>
             </Grid>
     </Grid>

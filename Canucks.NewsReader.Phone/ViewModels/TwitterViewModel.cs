@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Text;
 using Canucks.NewsReader.Common;
 using Canucks.NewsReader.Common.Helpers;
 using Canucks.NewsReader.Common.Model;
 using Canucks.NewsReader.Phone.Helpers;
 using Canucks.NewsReader.Phone.Services;
 using Canucks.NewsReader.Phone.Services.Contracts;
+using Microsoft.Phone.Reactive;
 
 namespace Canucks.NewsReader.Phone.ViewModels
 {
@@ -79,8 +81,22 @@ namespace Canucks.NewsReader.Phone.ViewModels
                 if (_errors.Count > 1)
                 {
                     const string str1 = "We were unable to load: ";
-                    List<string> strs = _errors;
-                    string str2 = string.Concat(str1, strs.Aggregate((i, j) => string.Concat(i, " , ", j)));
+                    var strs = _errors.ToArray();
+                    
+                   
+                    string result = null;
+                    bool first = true;
+                    foreach (string str in strs)
+                    {
+                        if (first)
+                        {
+                            first = false;
+                            result = str;
+                            continue;
+                        }
+                        result = string.Concat(result, " , ", str);
+                    }
+                    string str2 = string.Concat(str1, result);
                     var errorService1 = (new ErrorService(str2, "")).ErrorDialog(true);
                     errorService1.HandleError();
                 }
@@ -201,17 +217,27 @@ namespace Canucks.NewsReader.Phone.ViewModels
         {
             if (NetworkInterface.GetIsNetworkAvailable())
             {
-                GetTwitterFeed();
-                GetCanucksGameFeed();
-                GetCanucksticketsFeed();
-                GetCanucksStoreFeed();
-                GetCanucksPromoFeed();
-                CheckForErrors();
+                IScheduler scheduler = Scheduler.Dispatcher;
+                scheduler.Schedule(() =>
+                                       {
+                                           GetTwitterFeed();
+                                           GetCanucksGameFeed();
+                                           GetCanucksticketsFeed();
+                                           GetCanucksStoreFeed();
+                                           GetCanucksPromoFeed();
+                                           CheckForErrors();
+                                       });
             }
             else
             {
-                ErrorService errorService =
-                    (new ErrorService("We need a network connection to make this app work", "")).ErrorDialog(true);
+                var builder = new StringBuilder();
+                builder.AppendLine("To update the application a network connection is required.");
+                builder.AppendLine("The application will attempt to load saved data");
+                builder.AppendLine();
+                builder.AppendLine(
+                    "When a network connection has been re-established tap on the ellipsis at the bottom right hand corner and select ‘refresh’");
+                ErrorService errorService = new ErrorService(builder.ToString(), "No network connection detected")
+                    .ErrorDialog(true);
                 errorService.HandleError();
             }
         }

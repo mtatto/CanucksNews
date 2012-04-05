@@ -12,6 +12,11 @@ namespace Canucks.NewsReader.Common
         public const string FeaturesUrl = @"http://thetatto.com/NewsServices/Provider/GetFeatures";
         public const string Upcoming = @"http://thetatto.com/NewsServices/Provider/getupcomingschedule";
         public const string FinalScores = @"http://thetatto.com/NewsServices/Provider/GetCompletedSchedule";
+        public const string UpcomingPlayoff = @"http://thetatto.com/NewsServices/Provider/GetUpComingPlayoffSchedule";
+        public const string FinalScoresPlayoff = @"http://thetatto.com/NewsServices/Provider/GetCompletedPlayoffSchedule";
+        
+        public static DateTime PlayOffStart = new DateTime(2012,4,7);
+        public static DateTime PlayOffEnd = new DateTime(2012,10,01);
 
         public static Dictionary<string, KeyValuePair<string, string>> RssFeeds = new Dictionary
             <string, KeyValuePair<string, string>>

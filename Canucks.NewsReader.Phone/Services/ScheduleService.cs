@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Net;
+using System.Threading;
 using Canucks.NewsReader.Common;
 using Canucks.NewsReader.Common.Helpers;
 using Canucks.NewsReader.Common.Model;
 using Canucks.NewsReader.Phone.Helpers;
 using Canucks.NewsReader.Phone.Services.Contracts;
 using Microsoft.Phone.Reactive;
+using SharpGIS;
 
 namespace Canucks.NewsReader.Phone.Services
 {
@@ -15,16 +18,20 @@ namespace Canucks.NewsReader.Phone.Services
     {
         private ObservableCollection<UpComingViewSchedule> _upcoming;
 
+        #region IScheduleService Members
+
         public event LoadEventHandler ServiceLoaded;
 
-        public ObservableCollection<UpComingViewSchedule> GetUpcomingSchedule(string pageStart, string pageSize)
+        public ObservableCollection<UpComingViewSchedule> GetUpcomingSchedule(string url, string pageStart,
+                                                                              string pageSize)
         {
             _upcoming = new ObservableCollection<UpComingViewSchedule>();
+            var upcoming2 = new List<UpComingSchedule>();
             var loadedEventArgs = new LoadEventArgs();
 
-            string queryString = String.Format("{0}?start={1}&pageSize={2}", Settings.Upcoming, pageStart ?? "",
+            string queryString = String.Format("{0}?start={1}&pageSize={2}", url, pageStart ?? "",
                                                pageSize ?? "");
-            var wb = new SharpGIS.GZipWebClient();
+            var wb = new GZipWebClient();
             Observable.FromEvent<DownloadStringCompletedEventArgs>(wb, "DownloadStringCompleted")
                 .ObserveOn(Scheduler.ThreadPool)
                 .Select(x => ProcessUpcomingItems(x.EventArgs.Result))
@@ -35,23 +42,53 @@ namespace Canucks.NewsReader.Phone.Services
                                    loadedEventArgs.Message = "";
                                    foreach (UpComingSchedule upComingSchedule in s)
                                    {
-                                       InsertIntoIS(upComingSchedule);
+                                       upcoming2.Add(upComingSchedule);
                                        _upcoming.Add(ConvertToView(upComingSchedule));
                                    }
+
+                                   ThreadPool.QueueUserWorkItem(o =>
+                                                                    {
+                                                                        InsertIntoIS(upcoming2);
+                                                                        CacheUpComingSchedule(_upcoming);
+                                                                    });
+
                                    OnUpcomingScheduleLoaded(loadedEventArgs);
                                }, e =>
                                       {
                                           loadedEventArgs.IsLoaded = true;
                                           //TODO: LOG Error
-                                          ErrorService error = new ErrorService("Unable to retrieve any upcoming events", "")
-                                                                    .ErrorDialog(true);
+                                          ErrorService error = new ErrorService(
+                                              "Unable to retrieve any upcoming events", "")
+                                              .ErrorDialog(true);
                                           error.HandleError();
                                           OnUpcomingScheduleLoaded(loadedEventArgs);
                                       }
                 );
             wb.DownloadStringAsync(new Uri(queryString));
+
+            //TODO: Add this to the service
+            //if (!_upcoming.Any())
+            //{
+            //    _upcoming.Add(new UpComingViewSchedule{Teams = "Regular season complete", GameDateTime = "Enjoy the playoffs"});
+            //}
             return _upcoming;
         }
+
+        public bool IsPlayoffs()
+        {
+            //var wb = new WebClient();
+            //bool returnValue = false;
+            //wb.DownloadStringAsync(new Uri(Settings.IsPlayoffs));
+            //Observable.FromEvent<DownloadStringCompletedEventArgs>(wb, "DownloadStringCompleted")
+            //    .ObserveOn(Scheduler.ThreadPool)
+            //    .ObserveOn(Scheduler.Dispatcher)
+            //    .Subscribe(s => bool.TryParse(s.EventArgs.Result, out returnValue), e => { returnValue = false; }
+            //    );
+            //return returnValue;
+            throw new NotImplementedException();
+        }
+
+        #endregion
 
         private static UpComingViewSchedule ConvertToView(UpComingSchedule input)
         {
@@ -86,21 +123,38 @@ namespace Canucks.NewsReader.Phone.Services
             return returnType;
         }
 
-        private void InsertIntoIS(UpComingSchedule upComingSchedule)
+        private void InsertIntoIS(List<UpComingSchedule> upcoming2)
         {
-            
             if (App.isoSettings.Contains("UpComing"))
             {
-                var upcoming = App.isoSettings["UpComing"].ToString();
+                string upcoming = App.isoSettings["UpComing"].ToString();
                 if (string.IsNullOrWhiteSpace(upcoming))
                 {
-                    if (!string.IsNullOrWhiteSpace(upComingSchedule.HomeTeam) && (!string.IsNullOrWhiteSpace(upComingSchedule.VisitingTeam)))
+                    if (upcoming2.Any())
                     {
-                        var input = ConvertToView(upComingSchedule);
-                        App.isoSettings["UpComing"] = input.Teams;
+                        UpComingSchedule schedule = upcoming2.Last();
+                        if (!string.IsNullOrWhiteSpace(schedule.HomeTeam) &&
+                            (!string.IsNullOrWhiteSpace(schedule.VisitingTeam)))
+                        {
+                            UpComingViewSchedule input = ConvertToView(schedule);
+                            App.isoSettings["UpComing"] = input.Teams;
+                        }
                     }
-                    
                 }
+            }
+        }
+
+        private static void CacheUpComingSchedule(ObservableCollection<UpComingViewSchedule> upComingSchedule)
+        {
+            if (!(App.isoSettings.Contains("UpComingSchedule")))
+            {
+                string json = JsonHelpers.SerializeJson(upComingSchedule);
+                App.isoSettings.Add("UpComingSchedule", json);
+            }
+            else
+            {
+                string json = JsonHelpers.SerializeJson(upComingSchedule);
+                App.isoSettings["UpComingSchedule"] = json;
             }
         }
 

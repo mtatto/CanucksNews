@@ -9,33 +9,19 @@ namespace Canucks.NewsReader.Common.Helpers
     {
         public static string SerializeJson<T>(T input)
         {
-            var serializer = new DataContractJsonSerializer(input.GetType());
-            var ms = new MemoryStream();
-            serializer.WriteObject(ms, input);
-            byte[] bytes = ms.ToArray();
-            string retVal = Encoding.Unicode.GetString(bytes, 0, bytes.Length);
-            ms.Dispose();
-            return retVal;
+           return ServiceStack.Text.JsonSerializer.SerializeToString(input);
         }
 
         public static T DeserializeJson<T>(string input)
         {
-            var obj = Activator.CreateInstance<T>();
-            var ms = new MemoryStream(Encoding.Unicode.GetBytes(input));
-            var serializer = new DataContractJsonSerializer(obj.GetType());
             try
             {
-                obj = (T) serializer.ReadObject(ms);
-                ms.Close();
-                ms.Dispose();
-                return obj;
+                 return ServiceStack.Text.JsonSerializer.DeserializeFromString<T>(input);
+                
             }
             catch (Exception)
             {
-                obj = (T) serializer.ReadObject(ms);
-                ms.Close();
-                ms.Dispose();
-                return obj;
+                return ServiceStack.Text.JsonSerializer.DeserializeFromString<T>(input);
             }
         }
     }

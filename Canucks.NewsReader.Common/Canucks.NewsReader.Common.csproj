@@ -42,6 +42,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Phone.Reactive" />
+    <Reference Include="ServiceStack.Text.WindowsPhone7">
+      <HintPath>..\Library\ServiceStack.Text.WindowsPhone7.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Observable" />
     <Reference Include="System.Runtime.Serialization" />

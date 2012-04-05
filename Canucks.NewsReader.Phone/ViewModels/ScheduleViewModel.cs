@@ -1,8 +1,10 @@
 ﻿using System.Collections.ObjectModel;
+using Canucks.NewsReader.Common;
 using Canucks.NewsReader.Common.Model;
 using Canucks.NewsReader.Phone.Helpers;
 using Canucks.NewsReader.Phone.Services;
 using Canucks.NewsReader.Phone.Services.Contracts;
+using Microsoft.Phone.Reactive;
 
 namespace Canucks.NewsReader.Phone.ViewModels
 {
@@ -36,12 +38,13 @@ namespace Canucks.NewsReader.Phone.ViewModels
         private void GetUpcomingItems()
         {
             GlobalLoading.Instance.IsLoading = true;
-            UpComingSchedule = ScheduleService.GetUpcomingSchedule("1", "120");
+            UpComingSchedule = ScheduleService.GetUpcomingSchedule(Settings.Upcoming, "1", "120");
         }
 
         public void LoadData()
         {
-            GetUpcomingItems();
+            IScheduler scheduler = Scheduler.Dispatcher;
+            scheduler.Schedule(GetUpcomingItems);
         }
     }
 }

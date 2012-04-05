@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Globalization;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using Canucks.NewsReader.Phone.Services;
+using Canucks.NewsReader.Phone.Services.Contracts;
 using JeffWilcox.Controls;
 using Microsoft.Phone.Controls;
+using Microsoft.Phone.Reactive;
 using Microsoft.Phone.Scheduler;
 using Microsoft.Phone.Shell;
 using Microsoft.Phone.Tasks;
@@ -17,34 +21,43 @@ namespace Canucks.NewsReader.Phone
     {
         private static int _currentFeaturePage = 1;
 
+        private IScheduleService _scheduleService;
+
+        private IScheduleService ScheduleService
+        {
+            get { return _scheduleService ?? (_scheduleService = new ScheduleService()); }
+        }
+
         // Constructor
         public MainPage()
         {
-            //LayoutUpdated += MainPageLayoutUpdated;
+            IScheduler scheduler = Scheduler.Dispatcher;
+            scheduler.Schedule(() =>
+                                   {
+                                       InitializeComponent();
+                                       SystemTray.SetOpacity(this, 0.0);
+                                       SetRefreshImage();
+                                       if (!(App.isoSettings.Contains("UpComing")))
+                                       {
+                                           App.isoSettings.Add("UpComing", "");
+                                       }
+                                       if (!(App.isoSettings.Contains("FinalKey")))
+                                       {
+                                          App.isoSettings.Add("FinalKey", "");
+                                       }
 
-            InitializeComponent();
-
+                                       RefreshTileTask();
+                                   });
             DataContext = App.MainViewModel;
-            SystemTray.SetOpacity(this, 0.0);
-            SetRefreshImage();
-            if (! (App.isoSettings.Contains("UpComing")))
-            {
-                App.isoSettings.Add("UpComing", "");
-            }
-            if (!(App.isoSettings.Contains("FinalKey")))
-            {
-                App.isoSettings.Add("FinalKey", "");
-            }
 
+       
 
-            RefreshTileTask();
-
-            #if DEBUG
+#if DEBUG
             ScheduledAction action = ScheduledActionService.Find("CanucksNewsScheduler");
             if (action != null)
             ScheduledActionService.LaunchForTest("CanucksNewsScheduler", TimeSpan.FromSeconds(1));
             #endif
-        }
+            }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
@@ -53,7 +66,20 @@ namespace Canucks.NewsReader.Phone
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            this.RestoreState();
+            this.RestoreState(); 
+            //var t = (PanoramaItem)MainPano.Items[0];
+            //var rtr = t.Name;
+            //if (App.MainViewModel.IsPlayoffs)
+            //{
+
+
+            //    nhlPlayoffs.Visibility = System.Windows.Visibility.Visible;
+            //}
+            //else
+            //{
+            //    nhlPlayoffs.Visibility = System.Windows.Visibility.Collapsed;
+            //}
+
         }
 
         private void SetRefreshImage()
@@ -106,7 +132,7 @@ namespace Canucks.NewsReader.Phone
 
         private void RecentRefresh_Tap(object sender, GestureEventArgs e)
         {
-            App.MainViewModel.GetNewsStream();
+            App.MainViewModel.GetNewsStream(refresh: true);
         }
 
 
@@ -181,6 +207,16 @@ namespace Canucks.NewsReader.Phone
                 phonecall.PhoneNumber = phoneNumber.ToString();
                 phonecall.Show();
             }
+        }
+
+        private void lnkbtupcomingplayoffs_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void lnkbtFinalScoresPlayoffs_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

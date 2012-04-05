@@ -36,6 +36,20 @@ namespace Canucks.NewsReader.Phone.Views
             {
                 chkLiveTile.IsChecked = false;
             }
+
+            if ((App.isoSettings.Contains("Theme")))
+            {
+                var theme = App.isoSettings["Theme"].ToString();
+                if (theme == "Light")
+                {
+                    rb_LightTheme.IsChecked = true;
+                }
+                else
+                {
+                    rb_DarkTheme.IsChecked = true;
+                }
+            }
+
             this.RestoreState();
         }
 
@@ -89,6 +103,31 @@ namespace Canucks.NewsReader.Phone.Views
                     // ignore
                 }
                 
+            }
+        }
+
+        private void rb_LightTheme_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!(App.isoSettings.Contains("Theme")))
+            {
+                App.isoSettings.Add("Theme", "Light");
+            }
+            else
+            {
+                App.isoSettings["Theme"] = "Light";
+            }
+
+        }
+
+        private void rb_DarkTheme_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!(App.isoSettings.Contains("Theme")))
+            {
+                App.isoSettings.Add("Theme", "Dark");
+            }
+            else
+            {
+                App.isoSettings["Theme"] = "Dark";
             }
         }
     }

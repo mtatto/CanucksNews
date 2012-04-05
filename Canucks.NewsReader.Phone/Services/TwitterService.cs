@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Xml.Linq;
 using Canucks.NewsReader.Common;
 using Canucks.NewsReader.Common.Helpers;
@@ -101,6 +102,15 @@ namespace Canucks.NewsReader.Phone.Services
             foreach (TwitterStatusModel model in doc.Descendants("status").Select(BuildTwitterStatusl))
             {
                 feedModel.Add(model);
+            }
+
+            if (!(App.isoSettings.Contains("Twitter")))
+            {
+                ThreadPool.QueueUserWorkItem(o => App.isoSettings.Add("Twitter", JsonHelpers.SerializeJson(feedModel)));
+            }
+            else
+            {
+                ThreadPool.QueueUserWorkItem(o => App.isoSettings["Twitter"] = JsonHelpers.SerializeJson(feedModel));
             }
         }
 

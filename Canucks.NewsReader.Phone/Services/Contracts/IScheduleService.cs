@@ -7,6 +7,7 @@ namespace Canucks.NewsReader.Phone.Services.Contracts
     public interface IScheduleService
     {
         event LoadEventHandler ServiceLoaded;
-        ObservableCollection<UpComingViewSchedule> GetUpcomingSchedule(string pageStart, string pageSize);
+        ObservableCollection<UpComingViewSchedule> GetUpcomingSchedule(string url, string pageStart, string pageSize);
+        bool IsPlayoffs();
     }
 }

@@ -35,6 +35,7 @@ namespace Canucks.NewsReader.Phone.ViewModels
             }
 
             NewsPageTitle = !string.IsNullOrWhiteSpace(feedValue.Key) ? feedValue.Key : "Recent Items";
+
             NewsFeed = Service.GetNews(feedName, "8");
             NewsItems = NewsFeed.Items;
         }

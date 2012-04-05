@@ -8,6 +8,6 @@ namespace Canucks.NewsReader.Phone.Services.Contracts
     {
         event LoadEventHandler FinalScoresLoaded;
 
-        ObservableCollection<CompletedViewSchedule> GetFinalScores(string pageStart, string pageSize);
+        ObservableCollection<CompletedViewSchedule> GetFinalScores(string url, string pageStart, string pageSize);
     }
 }

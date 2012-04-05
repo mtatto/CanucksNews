@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
+using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Net;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Windows;
 using Canucks.NewsReader.Common;
 using Canucks.NewsReader.Common.Helpers;
 using Canucks.NewsReader.Common.Model;
@@ -61,6 +64,23 @@ namespace Canucks.NewsReader.Phone.Services
                                        _newsStream.Add(newsStreamItem);
                                    }
                                    OnNewsStreamLoaded(loadedEventArgs);
+                                   if (!(App.isoSettings.Contains("NewStream")))
+                                   {
+                                       ThreadPool.QueueUserWorkItem(o =>
+                                                                        {
+                                                                            var json= JsonHelpers.SerializeJson(_newsStream);
+                                                                            App.isoSettings.Add("NewStream", json);
+                                                                        });
+                                   }
+                                   else
+                                   {
+                                       ThreadPool.QueueUserWorkItem(o =>
+                                       {
+                                           var json = JsonHelpers.SerializeJson(_newsStream);
+                                           App.isoSettings["NewStream"] = json;
+                                       });
+                                   }
+
                                }, e =>
                                       {
                                           loadedEventArgs.IsLoaded = false;
@@ -94,7 +114,7 @@ namespace Canucks.NewsReader.Phone.Services
             string queryString = string.Format("{0}?feed={1}&pageSize={2}", Settings.NewsUrl, newsFeed ?? "",
                                                storyCount ?? "");
             var webClient = new SharpGIS.GZipWebClient();
-
+            
             Observable.FromEvent<DownloadStringCompletedEventArgs>(webClient, "DownloadStringCompleted")
                 .ObserveOn(Scheduler.ThreadPool)
                 .Select(x => ProcessNews(x.EventArgs.Result))
@@ -141,11 +161,11 @@ namespace Canucks.NewsReader.Phone.Services
             string qS = string.Format("{0}?feed={1}&pageSize={2}", Settings.FeaturesUrl, team ?? "",
                                       pageSize ?? "");
 
+             
             var wb = new SharpGIS.GZipWebClient();
             Observable.FromEvent<DownloadStringCompletedEventArgs>(wb, "DownloadStringCompleted")
                 .ObserveOn(Scheduler.ThreadPool)
                 .Select(newString => ProcessFeatures(newString.EventArgs.Result))
-                .ObserveOn(Scheduler.Dispatcher)
                 .Subscribe(s =>
                                {
                                    loadedEventArgs.IsLoaded = true;
@@ -160,10 +180,27 @@ namespace Canucks.NewsReader.Phone.Services
                                    for (int i = 0; i < s.FeatureItems.Count; i++)
                                    {
                                        NewsFeatureItem newsFeatureItem = s.FeatureItems[i];
-                                       _features.FeatureItems.Add(newsFeatureItem);
+                                       Deployment.Current.Dispatcher.BeginInvoke(() => _features.FeatureItems.Add(newsFeatureItem));
+                                       
                                    }
 
-                                   OnFeaturesLoaded(loadedEventArgs);
+                                  Deployment.Current.Dispatcher.BeginInvoke(() => OnFeaturesLoaded(loadedEventArgs));
+                                   if (!(App.isoSettings.Contains("Features")))
+                                   {
+                                       ThreadPool.QueueUserWorkItem(o =>
+                                       {
+                                           var json = JsonHelpers.SerializeJson(_features);
+                                           App.isoSettings.Add("Features", json);
+                                       });
+                                   }
+                                   else
+                                   {
+                                       ThreadPool.QueueUserWorkItem(o =>
+                                       {
+                                           var json = JsonHelpers.SerializeJson(_features);
+                                           App.isoSettings["Features"] = json;
+                                       });
+                                   }
                                }, e =>
                                       {
                                           loadedEventArgs.IsLoaded = false;

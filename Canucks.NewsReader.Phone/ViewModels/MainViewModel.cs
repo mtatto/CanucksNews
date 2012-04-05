@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Text;
+using Canucks.NewsReader.Common;
 using Canucks.NewsReader.Common.Helpers;
 using Canucks.NewsReader.Common.Model;
 using Canucks.NewsReader.Phone.Helpers;
 using Canucks.NewsReader.Phone.Services;
 using Canucks.NewsReader.Phone.Services.Contracts;
+using Microsoft.Phone.Reactive;
 
 namespace Canucks.NewsReader.Phone.ViewModels
 {
@@ -23,6 +26,7 @@ namespace Canucks.NewsReader.Phone.ViewModels
         private string _twitterDataStatus;
         private ITwitterService _twitterService;
 
+        public bool IsPlayoffs { get; private set; }
         public MainViewModel()
         {
             Service.NewsStreamLoaded += ServiceNewsStreamLoaded;
@@ -120,7 +124,6 @@ namespace Canucks.NewsReader.Phone.ViewModels
         private static void ServiceTwitterLoaded(object sender, LoadEventArgs e)
         {
             GlobalLoading.Instance.IsLoading = !e.IsLoaded;
-            
         }
 
         private static void ServiceFeaturesLoaded(object sender, LoadEventArgs e)
@@ -128,9 +131,10 @@ namespace Canucks.NewsReader.Phone.ViewModels
             GlobalLoading.Instance.IsLoading = !e.IsLoaded;
         }
 
-        internal void GetNewsStream(string start = "1", string pageSize ="15", bool refresh = false)
+        internal void GetNewsStream(string start = "1", string pageSize = "15", bool refresh = false)
         {
             GlobalLoading.Instance.IsLoading = true;
+
             try
             {
                 if (refresh)
@@ -147,12 +151,12 @@ namespace Canucks.NewsReader.Phone.ViewModels
             }
         }
 
-        internal void AddToNewsStream(string start, string pageSize ="15")
+        internal void AddToNewsStream(string start, string pageSize = "15")
         {
             GlobalLoading.Instance.IsLoading = true;
+
             try
             {
-
                 ObservableCollection<NewsStreamItem> newItems = Service.GetNewsStream("canucks", start, pageSize);
 
                 newItems.CollectionChanged += (o, i) =>
@@ -160,7 +164,7 @@ namespace Canucks.NewsReader.Phone.ViewModels
                                                       IList t = i.NewItems;
                                                       StreamItems.Add(t.OfType<NewsStreamItem>().Last());
                                                   };
-              
+
                 NotifyPropertyChanged("StreamItems");
             }
             catch (Exception)
@@ -168,9 +172,11 @@ namespace Canucks.NewsReader.Phone.ViewModels
                 _errors.Add("news stream");
             }
         }
+
         private void GetFeatures()
         {
             GlobalLoading.Instance.IsLoading = true;
+
             try
             {
                 NewsFeature = Service.GetFeatures("canuckscom", "8");
@@ -189,12 +195,12 @@ namespace Canucks.NewsReader.Phone.ViewModels
             {
                 if (UpComingSchedule == null)
                 {
-                    UpComingSchedule = ScheduleService.GetUpcomingSchedule("1", "2");
+                    UpComingSchedule = ScheduleService.GetUpcomingSchedule(Settings.Upcoming, "1", "2");
                 }
                 else
                 {
                     UpComingSchedule.Clear();
-                    UpComingSchedule = ScheduleService.GetUpcomingSchedule("1", "2");
+                    UpComingSchedule = ScheduleService.GetUpcomingSchedule(Settings.Upcoming, "1", "2");
                 }
 
                 NotifyPropertyChanged("UpComingSchedule");
@@ -210,9 +216,7 @@ namespace Canucks.NewsReader.Phone.ViewModels
             GlobalLoading.Instance.IsLoading = true;
             try
             {
-                CompletedSchedule = FinalScoreService.GetFinalScores("1", "2");
-
-               // CompletedSchedule.CollectionChanged += CompletedSchedule_CollectionChanged;
+                CompletedSchedule = FinalScoreService.GetFinalScores(Settings.FinalScores, "1", "2");
             }
             catch (Exception)
             {
@@ -220,16 +224,17 @@ namespace Canucks.NewsReader.Phone.ViewModels
             }
         }
 
-      
 
         internal void LoadScoresAndSchedules()
         {
             GetFinalScores();
             GetUpcomingItems();
         }
+
         internal void GetTwitterFeed()
         {
             GlobalLoading.Instance.IsLoading = true;
+
             try
             {
                 if (Twitter == null)
@@ -253,30 +258,107 @@ namespace Canucks.NewsReader.Phone.ViewModels
 
         public void LoadData()
         {
+            CheckPlayOff();
             if (!NetworkInterface.GetIsNetworkAvailable())
             {
-                ErrorService errorService = new ErrorService("We need a network connection to make this app work", "")
+                var builder = new StringBuilder();
+                builder.AppendLine("To update the application a network connection is required.");
+                builder.AppendLine("The application will attempt to load saved data");
+                builder.AppendLine();
+                builder.AppendLine(
+                    "When a network connection has been re-established tap on the ellipsis at the bottom right hand corner and select ‘refresh’");
+                ErrorService errorService = new ErrorService(builder.ToString(), "No network connection detected")
                     .ErrorDialog(true);
                 errorService.HandleError();
+                LoadCachedData();
             }
             else
             {
                 LoadScoresAndSchedules();
-                GetNewsStream();
-                GetFeatures();
-                GetTwitterFeed();
-                FeedInfo = new List<FeedInfo>
-                               {
-                                   new FeedInfo {Id = 1, Key = "twitter", FeedName = "twitter"},
-                                   new FeedInfo {Id = 2, Key = "canuckscom", FeedName = "canucks.com"},
-                                   new FeedInfo {Id = 3, Key = "thevancouversun", FeedName = "the vancouver sun"},
-                                   new FeedInfo {Id = 4, Key = "theprovince", FeedName = "the province"},
-                                   
-                               };
-                CheckForErrors();
+                IScheduler scheduler = Scheduler.Dispatcher;
+                scheduler.Schedule(() =>
+                                       {
+                                           GetNewsStream();
+                                           GetFeatures();
+                                           GetTwitterFeed();
+                                           GetFeedInfoItems();
+                                           CheckForErrors();
+                                       });
             }
         }
 
+        private void GetFeedInfoItems()
+        {
+            FeedInfo = new List<FeedInfo>
+                           {
+                               new FeedInfo {Id = 1, Key = "twitter", FeedName = "twitter"},
+                               new FeedInfo {Id = 2, Key = "canuckscom", FeedName = "canucks.com"},
+                               new FeedInfo {Id = 3, Key = "thevancouversun", FeedName = "the vancouver sun"},
+                               new FeedInfo {Id = 4, Key = "theprovince", FeedName = "the province"},
+                           };
+        }
+
+        private void LoadCachedData()
+        {
+            GetFeedInfoItems();
+            StreamItems = CachedNewsStreamItems();
+            NotifyPropertyChanged("StreamItems");
+            Features = CachedNewsFeatureItems();
+            NotifyPropertyChanged("NewsStreamItems");
+            Twitter = CachedTwitterItems();
+            NotifyPropertyChanged("Twitter");
+            UpComingSchedule = CachedUpcomingSchedule();
+            NotifyPropertyChanged("UpComingSchedule");
+            CompletedSchedule = CachedFinalScores();
+        }
+
+
+        private static ObservableCollection<CompletedViewSchedule> CachedFinalScores()
+        {
+            return App.isoSettings.Contains("FinalScores")
+                       ? JsonHelpers.DeserializeJson<ObservableCollection<CompletedViewSchedule>>(
+                           App.isoSettings["FinalScores"].ToString())
+                       : new ObservableCollection<CompletedViewSchedule>();
+        }
+
+        private static ObservableCollection<UpComingViewSchedule> CachedUpcomingSchedule()
+        {
+            return App.isoSettings.Contains("UpComingSchedule")
+                       ? JsonHelpers.DeserializeJson<ObservableCollection<UpComingViewSchedule>>(
+                           App.isoSettings["UpComingSchedule"].ToString())
+                       : new ObservableCollection<UpComingViewSchedule>();
+        }
+
+        private static ObservableCollection<NewsFeatureItem> CachedNewsFeatureItems()
+        {
+            return App.isoSettings.Contains("Features")
+                       ? JsonHelpers.DeserializeJson<ObservableCollection<NewsFeatureItem>>(
+                           App.isoSettings["Features"].ToString())
+                       : new ObservableCollection<NewsFeatureItem>();
+        }
+
+        private static ObservableCollection<NewsStreamItem> CachedNewsStreamItems()
+        {
+            return App.isoSettings.Contains("NewStream")
+                       ? JsonHelpers.DeserializeJson<ObservableCollection<NewsStreamItem>>(
+                           App.isoSettings["NewStream"].ToString())
+                       : new ObservableCollection<NewsStreamItem>();
+        }
+
+        private static ObservableCollectionEx<TwitterStatusModel> CachedTwitterItems()
+        {
+            return App.isoSettings.Contains("Twitter")
+                       ? JsonHelpers.DeserializeJson<ObservableCollectionEx<TwitterStatusModel>>(
+                           App.isoSettings["Twitter"].ToString())
+                       : new ObservableCollectionEx<TwitterStatusModel>();
+        }
+        private void CheckPlayOff()
+        {
+            if (DateTime.Now > Settings.PlayOffStart && DateTime.Now < Settings.PlayOffEnd)
+            {
+                IsPlayoffs = true;
+            }
+        }
         private void CheckForErrors()
         {
             if (_errors.Count == 0)

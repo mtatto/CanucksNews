@@ -27,7 +27,7 @@ namespace Canucks.NewsReader.Phone
 
         private static TwitterViewModel _twitterViewModel;
 
-        public static Theme CurrentTheme;
+        public static Canucks.NewsReader.Phone.Helpers.Theme CurrentTheme;
 
         public static IsolatedStorageSettings isoSettings;
 
@@ -54,13 +54,15 @@ namespace Canucks.NewsReader.Phone
             // Phone-specific initialization
             InitializePhoneApplication();
 
+            SetTheme();
+
             // Show graphics profiling information while debugging.
             if (Debugger.IsAttached)
             {
                 // Display the current frame rate counters.
                 Current.Host.Settings.EnableFrameRateCounter = true;
 
-                MetroGridHelper.IsVisible = true;
+               // MetroGridHelper.IsVisible = true;
 
                 // Show the areas of the app that are being redrawn in each frame.
                 //Application.Current.Host.Settings.EnableRedrawRegions = true;
@@ -123,32 +125,6 @@ namespace Canucks.NewsReader.Phone
         {
         }
 
-        //private void CreateLiveTile()
-        //{
-
-        //    // Application Tile is always the first Tile, even if it is not pinned to Start.
-        //    var tileToFind = ShellTile.ActiveTiles.First();
-
-        //    // Application should always be found
-        //    if (tileToFind != null)
-        //    {
-        //        // Set the properties to update for the Application Tile.
-        //        // Empty strings for the text values and URIs will result in the property being cleared.
-        //        var newTileData = new StandardTileData
-        //        {
-        //            Title = "Canucks News",
-        //            BackTitle = "Schedule",
-        //            BackContent = "Upcoming" + System.Environment.NewLine + "Final"
-
-        //        };
-
-        //        // Update the Application Tile
-        //        tileToFind.Update(newTileData);
-        //    }
-        //}
-
-        // Code to execute when the application is activated (brought to foreground)
-        // This code will not execute when the application is first launched
         private void Application_Activated(object sender, ActivatedEventArgs e)
         {
         }
@@ -226,11 +202,27 @@ namespace Canucks.NewsReader.Phone
             }
         }
 
+        private static void SetTheme()
+        {
+            if ((isoSettings.Contains("Theme")))
+            {
+                var theme = isoSettings["Theme"].ToString();
+                if (theme == "Light")
+                {
+                    ThemeManager.ToLightTheme();
+                }
+                else
+                {
+                    ThemeManager.ToDarkTheme();
+                }
+            }
+        }
+
         private static void SetRefreshImageSource()
         {
-            RefreshImage = CurrentTheme == Theme.Dark
-                               ? new BitmapImage(new Uri("Images/Dark/appbar.refresh.rest.png", UriKind.Relative))
-                               : new BitmapImage(new Uri("Images/Light/appbar.refresh.rest.png", UriKind.Relative));
+            //RefreshImage = CurrentTheme == Theme.Dark
+            //                   ? new BitmapImage(new Uri("Images/Dark/appbar.refresh.rest.png", UriKind.Relative))
+            //                   : new BitmapImage(new Uri("Images/Light/appbar.refresh.rest.png", UriKind.Relative));
         }
 
         #region Phone application initialization

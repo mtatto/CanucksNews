@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using Canucks.NewsReader.Common;
 using Canucks.NewsReader.Common.Model;
 using Canucks.NewsReader.Phone.Helpers;
 using Canucks.NewsReader.Phone.Services;
@@ -37,13 +38,13 @@ namespace Canucks.NewsReader.Phone.ViewModels
         private void GetFinalScores()
         {
             GlobalLoading.Instance.IsLoading = true;
-            FinalScores = FinalScoreService.GetFinalScores("1", "120");
+            FinalScores = FinalScoreService.GetFinalScores(Settings.FinalScores,"1", "120");
         }
 
         public void GetFinalScores(string currentPage)
         {
             GlobalLoading.Instance.IsLoading = true;
-            FinalScores = FinalScoreService.GetFinalScores("1", "120");
+            FinalScores = FinalScoreService.GetFinalScores(Settings.FinalScores, "1", "120");
         }
 
         public void LoadData()

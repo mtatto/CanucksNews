@@ -32,8 +32,8 @@ namespace Canucks.NewsReader.Phone
             }
             else
             {
-                mTitle.Text = "Sorry about this";
-                FMessage.Text = "Something unexpected occurred.";
+                mTitle.Text = "The application has encountered a problem.";
+                FMessage.Text = "Would you like to notify the application developers and send an error report?";
                 StackTraceHeader.Visibility = Visibility.Collapsed;
                 StackTrace.Visibility = Visibility.Collapsed;
                 StackBorder.Visibility = Visibility.Collapsed;

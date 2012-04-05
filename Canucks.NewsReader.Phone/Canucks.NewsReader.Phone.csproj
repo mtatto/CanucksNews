@@ -50,8 +50,23 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AdDuplex.AdControl.Silverlight">
+      <HintPath>..\Library\AdDuplex.AdControl.Silverlight.dll</HintPath>
+    </Reference>
+    <Reference Include="AdRotator">
+      <HintPath>..\Library\AdRotator.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.AdMob.Ads.WindowsPhone7">
+      <HintPath>..\Library\Google.AdMob.Ads.WindowsPhone7.dll</HintPath>
+    </Reference>
+    <Reference Include="InneractiveAdSDK">
+      <HintPath>..\Library\InneractiveAdSDK.dll</HintPath>
+    </Reference>
     <Reference Include="JeffWilcox.Maps">
       <HintPath>..\packages\JeffWilcox.Maps.1.1\lib\sl4-windowsphone71\JeffWilcox.Maps.dll</HintPath>
+    </Reference>
+    <Reference Include="JeffWilcox.PhoneThemeManager">
+      <HintPath>..\packages\PhoneThemeManager.1.01\lib\sl4-windowsphone71\JeffWilcox.PhoneThemeManager.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Advertising.Mobile, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="Microsoft.Advertising.Mobile.UI, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
@@ -67,8 +82,14 @@
     <Reference Include="Microsoft.Phone.Interop" />
     <Reference Include="Microsoft.Phone.Reactive" />
     <Reference Include="Microsoft.Xna.Framework" />
+    <Reference Include="ServiceStack.Text">
+      <HintPath>..\Library\ServiceStack.Text.dll</HintPath>
+    </Reference>
     <Reference Include="SharpGIS.GZipWebClient">
       <HintPath>..\packages\SharpGIS.GZipWebClient.1.2\lib\sl40-wp71\SharpGIS.GZipWebClient.dll</HintPath>
+    </Reference>
+    <Reference Include="SOMAWP7">
+      <HintPath>..\Library\SOMAWP7.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Device" />
@@ -92,6 +113,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="ViewModels\TwitterViewModel.cs" />
     <Compile Include="Views\FinalScores.xaml.cs">
       <DependentUpon>FinalScores.xaml</DependentUpon>
@@ -178,14 +200,18 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Canucks.NewsReader.Phone_2012_03_29_22_28_39.sap" />
     <None Include="packages.config" />
     <None Include="Properties\AppManifest.xml" />
-    <None Include="Properties\WMAppManifest.xml" />
+    <None Include="Properties\WMAppManifest.xml">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\About\Data.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="defaultAdSettings.xml" />
     <Content Include="Images\Dark\appbar.refresh.rest.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
