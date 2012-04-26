@@ -19,9 +19,11 @@ namespace Canucks.NewsReader.Phone.ViewModels
     {
         private readonly List<string> _errors;
         private IFinalScoreService _finalScoreService;
+        private IPlayoffFinalScoreService _playoffFinalScoreService;
         private string _newsItems;
         private string _newsStreamItems;
         private IScheduleService _scheduleService;
+        private IPlayOffScheduleService _playOffScheduleService;
         private INewsService _service;
         private string _twitterDataStatus;
         private ITwitterService _twitterService;
@@ -54,11 +56,23 @@ namespace Canucks.NewsReader.Phone.ViewModels
         }
 
 
+        private IPlayOffScheduleService PlayOffScheduleService
+        {
+            get { return _playOffScheduleService ?? (_playOffScheduleService = new PlayOffScheduleService()); }
+        }
+
+        private IPlayoffFinalScoreService playoffFinalScoreService
+        {
+            get { return _playoffFinalScoreService ?? (_playoffFinalScoreService = new PlayOffFinalScoreService()); }
+        }
+
         public ObservableCollection<NewsFeatureItem> Features { get; private set; }
         public ObservableCollectionEx<TwitterStatusModel> Twitter { get; private set; }
         public ObservableCollection<NewsStreamItem> StreamItems { get; private set; }
         public ObservableCollection<CompletedViewSchedule> CompletedSchedule { get; private set; }
         public ObservableCollection<UpComingViewSchedule> UpComingSchedule { get; private set; }
+        public ObservableCollection<CompletedViewSchedule> PlayOffFinalScores { get; private set; }
+        public ObservableCollection<UpComingViewSchedule> PlayoffUpComing { get; private set; }
         public NewsFeature NewsFeature { get; private set; }
         public List<FeedInfo> FeedInfo { get; private set; }
 
@@ -211,6 +225,29 @@ namespace Canucks.NewsReader.Phone.ViewModels
             }
         }
 
+        private void GetPlayoffUpComingItems()
+        {
+           // GlobalLoading.Instance.IsLoading = true;
+            try
+            {
+                if (PlayoffUpComing == null)
+                {
+                    PlayoffUpComing = PlayOffScheduleService.GetUpcomingPlayOffSchedule(Settings.UpcomingPlayoff, "1", "2");
+                }
+                else
+                {
+                    PlayoffUpComing.Clear();
+                    PlayoffUpComing = PlayOffScheduleService.GetUpcomingPlayOffSchedule(Settings.UpcomingPlayoff, "1", "2");
+                }
+
+                NotifyPropertyChanged("PlayoffUpComing");
+            }
+            catch (Exception)
+            {
+                _errors.Add("playoff upcoming games");
+            }
+        }
+
         private void GetFinalScores()
         {
             GlobalLoading.Instance.IsLoading = true;
@@ -223,12 +260,29 @@ namespace Canucks.NewsReader.Phone.ViewModels
                 _errors.Add("final scores");
             }
         }
-
+        private void GetPlayOFfFinalScores()
+        {
+            //GlobalLoading.Instance.IsLoading = true;
+            try
+            {
+                PlayOffFinalScores = playoffFinalScoreService.GetFinalScores(Settings.FinalScoresPlayoff, "1", "2");
+            }
+            catch (Exception)
+            {
+                _errors.Add("final scores");
+            }
+        }
 
         internal void LoadScoresAndSchedules()
         {
             GetFinalScores();
             GetUpcomingItems();
+        }
+
+        internal void LoadPlayoffScoresAndSchedules()
+        {
+            GetPlayOFfFinalScores();
+            GetPlayoffUpComingItems();
         }
 
         internal void GetTwitterFeed()
@@ -274,6 +328,11 @@ namespace Canucks.NewsReader.Phone.ViewModels
             }
             else
             {
+                
+                if (IsPlayoffs)
+                {
+                    LoadPlayoffScoresAndSchedules();
+                }
                 LoadScoresAndSchedules();
                 IScheduler scheduler = Scheduler.Dispatcher;
                 scheduler.Schedule(() =>

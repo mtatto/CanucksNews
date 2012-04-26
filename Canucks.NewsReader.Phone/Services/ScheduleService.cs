@@ -149,12 +149,18 @@ namespace Canucks.NewsReader.Phone.Services
             if (!(App.isoSettings.Contains("UpComingSchedule")))
             {
                 string json = JsonHelpers.SerializeJson(upComingSchedule);
-                App.isoSettings.Add("UpComingSchedule", json);
+                if (!string.IsNullOrEmpty(json) && json != "[]")
+                {
+                    App.isoSettings.Add("UpComingSchedule", json);
+                }
             }
             else
             {
                 string json = JsonHelpers.SerializeJson(upComingSchedule);
-                App.isoSettings["UpComingSchedule"] = json;
+                if (!string.IsNullOrEmpty(json) && json != "[]")
+                {
+                    App.isoSettings["UpComingSchedule"] = json;
+                }
             }
         }
 

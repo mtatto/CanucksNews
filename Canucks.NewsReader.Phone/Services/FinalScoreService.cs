@@ -125,12 +125,27 @@ namespace Canucks.NewsReader.Phone.Services
             if (!(App.isoSettings.Contains("FinalScores")))
             {
                 string json = JsonHelpers.SerializeJson(finalScores);
-                App.isoSettings.Add("FinalScores", json);
+                if (!string.IsNullOrWhiteSpace(json) || json != "[]")
+                {
+                    try
+                    {
+                        App.isoSettings.Add("FinalScores", json);
+                    }
+                    catch (Exception)
+                    {
+                        
+                       //best effort
+                    }
+                    
+                }
             }
             else
             {
                 string json = JsonHelpers.SerializeJson(finalScores);
-                App.isoSettings["FinalScores"] = json;
+                if (!string.IsNullOrEmpty(json) || json != "[]")
+                {
+                    App.isoSettings["FinalScores"] = json;
+                }
             }
         }
 

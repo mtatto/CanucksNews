@@ -14,9 +14,10 @@
                             xmlns:geo="clr-namespace:System.Device.Location;assembly=System.Device" mc:Ignorable="d" d:DesignWidth="480"
                             d:DesignHeight="696" FontFamily="{StaticResource PhoneFontFamilyNormal}"
                             FontSize="{StaticResource PhoneFontSizeNormal}" Foreground="{StaticResource PhoneForegroundBrush}"
-                            SupportedOrientations="Portrait" Orientation="Portrait" shell:SystemTray.IsVisible="True" Visibility="{Binding}" xmlns:my1="clr-namespace:Canucks.NewsReader.Phone.Converters">
+                            SupportedOrientations="Portrait" Orientation="Portrait" shell:SystemTray.IsVisible="True" Visibility="{Binding}" 
+                            xmlns:my1="clr-namespace:Canucks.NewsReader.Phone.Converters">
     <phone:PhoneApplicationPage.Resources>
-        <my1:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <my1:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />       
     </phone:PhoneApplicationPage.Resources>
     <!--LayoutRoot is the root grid where all page content is placed-->
    <Grid x:Name="LayoutRoot" Background="Transparent">
@@ -24,7 +25,7 @@
       <!--<controls:Panorama.Background>
                 <ImageBrush ImageSource="images/Canucks.jpg"></ImageBrush>
             </controls:Panorama.Background>-->
-            <controls:PanoramaItem Header="nhl playoffs" x:Name="nhlPlayoffs" Visibility="{Binding IsPlayoffs, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <controls:PanoramaItem Header="nhl playoffs" x:Name="nhlPlayoffs" Visibility="{Binding IsPlayoffs, Converter={StaticResource BooleanToVisibilityConverter}}" >
                 <Grid>
                     <Image x:Name="playoffsRefresh" HorizontalAlignment="Right" Height="48" Margin="0,-90,25,0" Source=""
                  Stretch="Fill" VerticalAlignment="Top" Width="48" Tap="ScheduleRefresh_Tap" toolkit:TiltEffect.IsTiltEnabled="True" />
@@ -32,13 +33,13 @@
                         <StackPanel Margin="0,0,-12,0">
                             <HyperlinkButton x:Name="lnkbtupcomingPlayoffs" Margin="12,0,-12,0" HorizontalAlignment="Stretch"
                                HorizontalContentAlignment="Left" toolkit:TiltEffect.IsTiltEnabled="True" Style="{StaticResource EmptyButtonStyle}"
-                               Background="#06843D" Click="lnkbtupcomingplayoffs_Click" Height="48">
+                               Background="#FF002D56" Click="lnkbtupcomingplayoffs_Click" Height="60">
                                 <Grid Margin="12,0,-12,0">
-                                    <TextBlock Style="{StaticResource PhoneTextNormalStyle}" Text="Upcoming" Margin="0,0,0,1"
-                             Foreground="White" />
+                                    <TextBlock Style="{StaticResource PhoneTextNormalStyle}" Text="upcoming games" Margin="0,0,0,1"
+                             Foreground="White" FontSize="26.667"/>
                                 </Grid>
                             </HyperlinkButton>
-                            <ListBox Margin="0,0,-12,0" x:Name="UpComingPlayoffs" ItemsSource="{Binding UpComingSchedule}"
+                            <ListBox Margin="0,0,-12,0" x:Name="UpComingPlayoffs" ItemsSource="{Binding PlayoffUpComing}"
                        ScrollViewer.VerticalScrollBarVisibility="Disabled">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
@@ -60,19 +61,19 @@
                                HorizontalContentAlignment="Left" toolkit:TiltEffect.IsTiltEnabled="True" Style="{StaticResource EmptyButtonStyle}"
                                Click="lnkbtupcomingplayoffs_Click">
                                 <TextBlock Margin="0,6,-12,6" Style="{StaticResource PhoneTextNormalStyle}"
-                           Foreground="{StaticResource PhoneAccentBrush}" Text="more..." Width="421" />
+                           Foreground="#FF018754" Text="more..." Width="421" FontSize="21.333" />
                             </HyperlinkButton>
 
                             <HyperlinkButton x:Name="lnkbtFinalScoresPlayoffs" Margin="12,0,-12,0" HorizontalAlignment="Stretch"
                                HorizontalContentAlignment="Left" toolkit:TiltEffect.IsTiltEnabled="True" Style="{StaticResource EmptyButtonStyle}"
-                               Background="#06843D" Click="lnkbtFinalScoresPlayoffs_Click" Height="48">
+                               Background="#FF002D56" Click="lnkbtFinalScoresPlayoffs_Click" Height="60">
                                 <Grid Margin="12,0,-12,0">
-                                    <TextBlock Style="{StaticResource PhoneTextNormalStyle}" Text="Final Scores" Margin="0,0,0,1"
-                             Foreground="White" />
+                                    <TextBlock Style="{StaticResource PhoneTextNormalStyle}" Text="final scores" Margin="0,0,0,1"
+                             Foreground="White" FontSize="26.667" />
                                 </Grid>
                             </HyperlinkButton>
 
-                            <ListBox Margin="0,0,-12,0" x:Name="FinalPlayoffs" ItemsSource="{Binding CompletedSchedule}"
+                            <ListBox Margin="0,0,-12,0" x:Name="FinalPlayoffs" ItemsSource="{Binding PlayOffFinalScores}"
                        ScrollViewer.VerticalScrollBarVisibility="Disabled">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
@@ -93,8 +94,7 @@
                             <HyperlinkButton x:Name="lnkbtFinalScores2Playoffs" Margin="12,0,-12,0" HorizontalAlignment="Stretch"
                                HorizontalContentAlignment="Left" toolkit:TiltEffect.IsTiltEnabled="True" Style="{StaticResource EmptyButtonStyle}"
                                Click="lnkbtFinalScoresPlayoffs_Click">
-                                <TextBlock Margin="0,6,-12,6" Style="{StaticResource PhoneTextNormalStyle}"
-                           Foreground="{StaticResource PhoneAccentBrush}" Text="more..." Width="421" />
+                                <TextBlock Margin="0,6,-12,6" Style="{StaticResource PhoneTextNormalStyle}" Text="more..." Width="421" Foreground="#FF018754" FontSize="21.333" />
                             </HyperlinkButton>
                         </StackPanel>
                     </ScrollViewer>
@@ -109,10 +109,10 @@
             <StackPanel Margin="0,0,-12,0">
               <HyperlinkButton x:Name="lnkbtupcoming" Margin="12,0,-12,0" HorizontalAlignment="Stretch"
                                HorizontalContentAlignment="Left" toolkit:TiltEffect.IsTiltEnabled="True" Style="{StaticResource EmptyButtonStyle}"
-                               Background="#06843D" Click="lnkbtupcoming_Click" Height="48">
+                               Background="#FF002D56" Click="lnkbtupcoming_Click" Height="60">
                 <Grid Margin="12,0,-12,0">
-                  <TextBlock Style="{StaticResource PhoneTextNormalStyle}" Text="Upcoming" Margin="0,0,0,1"
-                             Foreground="White" />
+                  <TextBlock Style="{StaticResource PhoneTextNormalStyle}" Text="upcoming games" Margin="0,0,0,1"
+                             Foreground="White" FontSize="26.667" HorizontalAlignment="Right" />
                 </Grid>
               </HyperlinkButton>
               <ListBox Margin="0,0,-12,0" x:Name="UpComin" ItemsSource="{Binding UpComingSchedule}"
@@ -136,16 +136,16 @@
               <HyperlinkButton x:Name="lnkbtupcoming2" Margin="12,0,-12,0" HorizontalAlignment="Stretch"
                                HorizontalContentAlignment="Left" toolkit:TiltEffect.IsTiltEnabled="True" Style="{StaticResource EmptyButtonStyle}"
                                Click="lnkbtupcoming_Click">
-                                <TextBlock Margin="0,6,-12,6" Style="{StaticResource PhoneTextNormalStyle}"
-                           Foreground="{StaticResource PhoneAccentBrush}" Text="more..." Width="421" />
+                                <TextBlock Margin="0,6,-12,6" Style="{StaticResource PhoneTextNormalStyle}" Width="421" Foreground="#FF018754" FontSize="21.333"  >
+                                    <Run Text="more"/><Run Text="..."/></TextBlock>
               </HyperlinkButton>
 
               <HyperlinkButton x:Name="lnkbtFinalScores" Margin="12,0,-12,0" HorizontalAlignment="Stretch"
                                HorizontalContentAlignment="Left" toolkit:TiltEffect.IsTiltEnabled="True" Style="{StaticResource EmptyButtonStyle}"
-                               Background="#06843D" Click="lnkbtFinalScores_Click" Height="48">
+                               Background="#FF002D56" Click="lnkbtFinalScores_Click" Height="60">
                 <Grid Margin="12,0,-12,0">
-                  <TextBlock Style="{StaticResource PhoneTextNormalStyle}" Text="Final Scores" Margin="0,0,0,1"
-                             Foreground="White" />
+                  <TextBlock Style="{StaticResource PhoneTextNormalStyle}" Text="final scores" Margin="0,0,0,1"
+                             Foreground="White" FontSize="26.667" />
                 </Grid>
               </HyperlinkButton>
 
@@ -170,8 +170,7 @@
               <HyperlinkButton x:Name="lnkbtFinalScores2" Margin="12,0,-12,0" HorizontalAlignment="Stretch"
                                HorizontalContentAlignment="Left" toolkit:TiltEffect.IsTiltEnabled="True" Style="{StaticResource EmptyButtonStyle}"
                                Click="lnkbtFinalScores_Click">
-                                <TextBlock Margin="0,6,-12,6" Style="{StaticResource PhoneTextNormalStyle}"
-                           Foreground="{StaticResource PhoneAccentBrush}" Text="more..." Width="421" />
+                                <TextBlock Margin="0,6,-12,6" Style="{StaticResource PhoneTextNormalStyle}" Width="421" Foreground="#FF018754" FontSize="21.333" Text="more..."></TextBlock>
                             </HyperlinkButton>
             </StackPanel>
           </ScrollViewer>

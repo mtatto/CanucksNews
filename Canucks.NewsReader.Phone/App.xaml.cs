@@ -23,7 +23,11 @@ namespace Canucks.NewsReader.Phone
 
         private static ScheduleViewModel _scheduleViewModel;
 
+        private static PlayOffScheduleViewModel _playOffScheduleViewModel;
+
         private static FinalScoresViewModel _finalScoresViewModel;
+
+        private static PlayOffFinalScoresViewModel _playOffFinalScoresViewModel;
 
         private static TwitterViewModel _twitterViewModel;
 
@@ -110,9 +114,19 @@ namespace Canucks.NewsReader.Phone
             get { return _scheduleViewModel ?? (_scheduleViewModel = new ScheduleViewModel()); }
         }
 
+        public static PlayOffScheduleViewModel PlayOffScheduleViewModel
+        {
+            get { return _playOffScheduleViewModel ?? (_playOffScheduleViewModel = new PlayOffScheduleViewModel()); }
+        }
+
         public static FinalScoresViewModel FinalScoresViewModel
         {
             get { return _finalScoresViewModel ?? (_finalScoresViewModel = new FinalScoresViewModel()); }
+        }
+
+        public static PlayOffFinalScoresViewModel PlayOffFinalScoresViewModel
+        {
+            get { return _playOffFinalScoresViewModel ?? (_playOffFinalScoresViewModel = new PlayOffFinalScoresViewModel()); }
         }
 
         public static TwitterViewModel TwitterViewModel
@@ -215,6 +229,11 @@ namespace Canucks.NewsReader.Phone
                 {
                     ThemeManager.ToDarkTheme();
                 }
+            }
+            else
+            {
+                ThemeManager.ToLightTheme();
+                App.isoSettings["Theme"] = "Light";
             }
         }
 

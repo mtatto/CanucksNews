@@ -62,14 +62,22 @@ namespace CanucksNewsScheduler
 
         private void ProcessNotification()
         {
-            if (GetUpdateSelection())
+            if (DateTime.Now > new DateTime(2012, 4, 5) || DateTime.Now < new DateTime(2012, 10, 01))
             {
-                GetUpcomingSchedule();
+                GetUpcomingPlayoffSchedule();
             }
             else
             {
-                GetFinalScore();
+                if (GetUpdateSelection())
+                {
+                    GetUpcomingSchedule();
+                }
+                else
+                {
+                    GetFinalScore();
+                } 
             }
+            
         }
 
         public bool GetUpdateSelection()
@@ -144,6 +152,14 @@ namespace CanucksNewsScheduler
         }
 
         #endregion
+
+        private void GetUpcomingPlayoffSchedule()
+        {
+            string queryString = String.Format("{0}?start={1}&pageSize={2}", Settings.UpcomingPlayoff, "1", "1");
+            var wb = new WebClient();
+            wb.DownloadStringCompleted += (s, ev) => UpdateUpComing(ProcessUpcomingItems(ev.Result));
+            wb.DownloadStringAsync(new Uri(queryString));
+        }
 
         #region Upcoming
 

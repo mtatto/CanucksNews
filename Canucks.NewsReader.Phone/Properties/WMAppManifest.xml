@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2009/deployment" AppPlatformVersion="7.1">
-  <App xmlns="" ProductID="{b948bb74-34cd-4e67-80e2-0b7afd94fa13}" Title="Canucks News" RuntimeType="Silverlight" Version="1.0.1.0" Genre="apps.normal" Author="Canucks.NewsReader.Phone author" Description="Sample description" Publisher="Canucks.NewsReader.Phone">
+  <App xmlns="" ProductID="{b948bb74-34cd-4e67-80e2-0b7afd94fa13}" Title="Canucks News" RuntimeType="Silverlight" Version="1.0.1.3" Genre="apps.normal" Author="Canucks.NewsReader.Phone author" Description="Sample description" Publisher="Canucks.NewsReader.Phone">
     <IconPath IsRelative="true" IsResource="false">Images\ApplicationIcon.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_LOCATION" />

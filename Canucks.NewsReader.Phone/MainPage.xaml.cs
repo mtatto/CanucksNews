@@ -66,20 +66,7 @@ namespace Canucks.NewsReader.Phone
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            this.RestoreState(); 
-            //var t = (PanoramaItem)MainPano.Items[0];
-            //var rtr = t.Name;
-            //if (App.MainViewModel.IsPlayoffs)
-            //{
-
-
-            //    nhlPlayoffs.Visibility = System.Windows.Visibility.Visible;
-            //}
-            //else
-            //{
-            //    nhlPlayoffs.Visibility = System.Windows.Visibility.Collapsed;
-            //}
-
+            this.RestoreState();
         }
 
         private void SetRefreshImage()
@@ -203,20 +190,22 @@ namespace Canucks.NewsReader.Phone
             var phoneNumber = ((TextBlock) sender).Tag;
             if (!string.IsNullOrWhiteSpace(phoneNumber.ToString()))
             {
-                var phonecall = new PhoneCallTask();
-                phonecall.PhoneNumber = phoneNumber.ToString();
+                var phonecall = new PhoneCallTask {PhoneNumber = phoneNumber.ToString()};
                 phonecall.Show();
             }
         }
 
         private void lnkbtupcomingplayoffs_Click(object sender, RoutedEventArgs e)
         {
-
+            NavigationService.Navigate(new Uri("/Views/PlayOffSchedule.xaml", UriKind.Relative));
         }
 
         private void lnkbtFinalScoresPlayoffs_Click(object sender, RoutedEventArgs e)
         {
 
+            NavigationService.Navigate(new Uri("/Views/PlayOffFinalScores.xaml", UriKind.Relative));
         }
+
+      
     }
 }

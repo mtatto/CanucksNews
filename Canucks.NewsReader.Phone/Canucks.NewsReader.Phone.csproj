@@ -114,12 +114,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Services\Contracts\IPlayOffScheduleService.cs" />
+    <Compile Include="Services\PlayOffFinalScoreService.cs" />
+    <Compile Include="Services\PlayOffScheduleService.cs" />
+    <Compile Include="ViewModels\PlayOffFinalScoresViewModel.cs" />
+    <Compile Include="ViewModels\PlayOffScheduleViewModel.cs" />
     <Compile Include="ViewModels\TwitterViewModel.cs" />
     <Compile Include="Views\FinalScores.xaml.cs">
       <DependentUpon>FinalScores.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\NewsFeed.xaml.cs">
       <DependentUpon>NewsFeed.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlayOffFinalScores.xaml.cs">
+      <DependentUpon>PlayOffFinalScores.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlayOffSchedule.xaml.cs">
+      <DependentUpon>PlayOffSchedule.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Schedule.xaml.cs">
       <DependentUpon>Schedule.xaml</DependentUpon>
@@ -177,6 +188,14 @@
     <Page Include="Views\NewsFeed.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PlayOffFinalScores.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlayOffSchedule.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Schedule.xaml">
       <Generator>MSBuild:Compile</Generator>

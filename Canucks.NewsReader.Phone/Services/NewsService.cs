@@ -137,13 +137,7 @@ namespace Canucks.NewsReader.Phone.Services
 
         private static NewsFeedModel ProcessNews(string result)
         {
-            byte[] byteArray = Encoding.UTF8.GetBytes(result);
-            using (var ms = new MemoryStream(byteArray))
-            {
-                var ser = new DataContractJsonSerializer(typeof (NewsFeedModel));
-
-                return (NewsFeedModel) ser.ReadObject(ms);
-            }
+            return JsonHelpers.DeserializeJson<NewsFeedModel>(result);
         }
 
         #endregion

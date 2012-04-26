@@ -10,4 +10,11 @@ namespace Canucks.NewsReader.Phone.Services.Contracts
 
         ObservableCollection<CompletedViewSchedule> GetFinalScores(string url, string pageStart, string pageSize);
     }
+
+    public interface IPlayoffFinalScoreService
+    {
+        event LoadEventHandler FinalScoresLoaded;
+
+        ObservableCollection<CompletedViewSchedule> GetFinalScores(string url, string pageStart, string pageSize);
+    }
 }

@@ -7,15 +7,15 @@ namespace Canucks.NewsReader.Common
     {
         #region FeedInfo
 
-        public const string NewsUrl = @"http://thetatto.com/NewsServices/Provider/getnews";
-        public const string StreamUrl = @"http://thetatto.com/NewsServices/Provider/GetNewsStream";
-        public const string FeaturesUrl = @"http://thetatto.com/NewsServices/Provider/GetFeatures";
-        public const string Upcoming = @"http://thetatto.com/NewsServices/Provider/getupcomingschedule";
-        public const string FinalScores = @"http://thetatto.com/NewsServices/Provider/GetCompletedSchedule";
-        public const string UpcomingPlayoff = @"http://thetatto.com/NewsServices/Provider/GetUpComingPlayoffSchedule";
-        public const string FinalScoresPlayoff = @"http://thetatto.com/NewsServices/Provider/GetCompletedPlayoffSchedule";
+        public const string NewsUrl = @"http://thetatto.com/CanucksNewsServices/Provider/getnews";
+        public const string StreamUrl = @"http://thetatto.com/CanucksNewsServices/Provider/GetNewsStream";
+        public const string FeaturesUrl = @"http://thetatto.com/CanucksNewsServices/Provider/GetFeatures";
+        public const string Upcoming = @"http://thetatto.com/CanucksNewsServices/Provider/getupcomingschedule";
+        public const string FinalScores = @"http://thetatto.com/CanucksNewsServices/Provider/GetCompletedSchedule";
+        public const string UpcomingPlayoff = @"http://thetatto.com/CanucksNewsServices/Provider/GetUpComingPlayoffSchedule";
+        public const string FinalScoresPlayoff = @"http://thetatto.com/CanucksNewsServices/Provider/GetCompletedPlayoffSchedule";
         
-        public static DateTime PlayOffStart = new DateTime(2012,4,7);
+        public static DateTime PlayOffStart = new DateTime(2012,4,5);
         public static DateTime PlayOffEnd = new DateTime(2012,10,01);
 
         public static Dictionary<string, KeyValuePair<string, string>> RssFeeds = new Dictionary
